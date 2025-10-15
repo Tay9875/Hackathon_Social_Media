@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        default: "I'm a new user",
+        default: "But where do I live though?!",
         maxLength: 250,
         trim: true
     },
@@ -61,7 +61,6 @@ const userSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
         default: "I'm a new user",
         maxLength: 250,
         trim: true
