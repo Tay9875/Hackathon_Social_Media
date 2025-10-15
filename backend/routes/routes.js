@@ -2,6 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const User = require("../models/userModel");
+const { v4: uuidv4 } = require("uuid");
+const Chat = require("../models/chatModel");
+const Post = require("../models/postModel");
+const Token = require("../models/tokenModel");
 
 const app = express();
 app
@@ -18,7 +23,7 @@ app.get('/api/users', async (req, res) => {
 });
 
 app.get('/api/users/:uuid', async (req, res) => {
-    const user = await User.findById(req.params.uuid);
+    const user = await User.findByUuid(req.params.uuid);
     res.json(user);
 });
 
@@ -26,13 +31,9 @@ app.post('/api/users', async (req, res) => {
     const { firstName, lastName, gender, birthDate, email, adress, avatar, password, description } = req.body;
     if(!firstName || !lastName || !birthDate || !email || !password) return res.status(400).json({ message: 'Missing required fields' });
     try {
-        const newUser = await User.create({ uuid, email, firstName, lastName, gender, birthDate, adress, avatar, password, description });
+        const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, adress, avatar, password, description });
         res.status(201).json(newUser);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
-
-app.post('/api/users/messages', async (req, res) => {
-    
-})
