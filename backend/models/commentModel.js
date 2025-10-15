@@ -9,7 +9,7 @@ const chatSchema = new mongoose.Schema({
         unique: true,
         default: uuidv4(),
     },
-    messages: {
+    message: {
         type: String,
         required: true,
     },
