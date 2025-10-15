@@ -21,35 +21,15 @@ router.get('/profile/:uuid', async (req, res) => {
     res.json(comments);
 });
 
-/*
 router.post('/', async (req, res) => {
-    const { firstName, lastName, gender, birthDate, email, adress, avatar, password, description } = req.body;
-    if(!firstName || !lastName || !birthDate || !email || !password) return res.status(400).json({ message: 'Missing required fields' });
+    const { message, createdBy, profile } = req.body;
+    if(!message || !createdBy || !profile) return res.status(400).json({ message: 'Missing required fields' });
     try {
-        const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, adress, avatar, password, description });
-        res.status(201).json(newUser);
+        const newComment = await Comment.create({ uuid: uuidv4(), message, createdBy, profile });
+        res.status(201).json(newComment);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
-*/
-router.put('/:uuid', async (req, res) => {
-    const { firstName, lastName, gender, birthDate, adress, avatar, password, description } = req.body;
-    const { uuid } = req.params;
-    try {
-        const updatedUser = await User.updateOne({ uuid }, { firstName, lastName, gender, birthDate, adress, avatar, password, description });
-        res.status(200).json(updatedUser);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-})
-
-router.get('/address', async (req,res) => {
-    const users = await User.find();
-    console.log(users);
-    const usersWithAddresses = users.filter(user => user.address !== null)
-    console.log(usersWithAddresses);
-    res.json(users);
-})
 
 module.exports = router;
