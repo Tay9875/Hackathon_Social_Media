@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 const User = require("./userModel");
 const { v4: uuidv4 } = require("uuid");
 
-const chatSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema({
     uuid: {
         type: String,
         required: true,
         unique: true,
         default: uuidv4(),
     },
-    messages: {
+    content: {
         type: String,
         required: true,
     },
@@ -22,10 +22,4 @@ const chatSchema = new mongoose.Schema({
         type: User.schema,
         required: true,
     },
-    profile: {
-        type: User.schema,
-        required: true,
-    }
 });
-
-module.exports = mongoose.model("Chat", chatSchema);

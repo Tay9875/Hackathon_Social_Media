@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Token = require("./tokenModel");
 const { v4: uuidv4 } = require("uuid");
 
 const userSchema = new mongoose.Schema({
@@ -65,6 +66,12 @@ const userSchema = new mongoose.Schema({
         default: "I'm a new user",
         maxLength: 250,
         trim: true
+    },
+    token: {
+        type: Token.schema,
+        required: true,
+        unique: true,
+        default: uuidv4(),
     },
 })
 
