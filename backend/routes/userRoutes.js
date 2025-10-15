@@ -36,9 +36,4 @@ router.put('/:uuid', async (req, res) => {
     }
 })
 
-// router.get('/adresses', async (req,res) => {
-//     const adresses = await User.find({ adress: { $exists: true } });
-//     res.status(200).json(adresses);
-// })
-
 module.exports = router;
