@@ -1,11 +1,11 @@
-const API_SIGNUP_URL = 'http://localhost:3000/api/signup';  
+const API_SIGNUP_URL = 'http://localhost:3000/api/auth/signup';  
 
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcryptjs';
 const saltRounds = 10;
 
 
-export async function addUser(firstName, email, avatar, password, description, gender, lastName, birthDate, address) {
-    const hash = bcrypt.hashSync(password, saltRounds);
+export async function addUser(user) {
+    const hash = bcrypt.hashSync(user.password, saltRounds);
     try {
         const response = await fetch(API_SIGNUP_URL, {
             method: 'POST',
@@ -13,15 +13,15 @@ export async function addUser(firstName, email, avatar, password, description, g
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                firstName: firstName.value,
-                email: email.value,
-                avatar: avatar.value,
+                firstName: user.firstname,
+                email: user.email,
+                avatar: user.avatar,
                 password: hash,
-                description: description.value,
-                gender: gender.value,
-                lastName: lastName.value,
-                birthDate: birthDate.value,
-                address: address.value
+                description: user.description,
+                gender: user.gender,
+                lastName: user.lastname,
+                birthDate: user.birthdate,
+                adress: user.address
             })
         });
         if (!response.ok) {

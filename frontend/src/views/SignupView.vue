@@ -1,4 +1,5 @@
 <script setup>
+import { addUser } from '@/api/signupApi';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -7,6 +8,8 @@ const firstname = ref('');
 const lastname = ref('');
 const email = ref('');
 const password = ref('');
+const birthdate = ref('');
+const gender = ref('');
 
 const onAvatarChange = (event) => {
     const file = event.target.files[0];
@@ -21,11 +24,22 @@ const onAvatarChange = (event) => {
 
 const router = useRouter();
 const handleSignup = () => {
-    // Simulate a signup process
     if (email.value && password.value) {
-        // In a real app, you'd verify credentials here
-        alert(`Signed up with: ${email.value}`);
-        router.push('/'); // Redirect to home after signup
+        try {
+            addUser({
+                firstname: firstname.value,
+                email: email.value,
+                avatar: avatarUrl.value,
+                password: password.value,
+                description: "",
+                gender: gender.value,
+                lastname: lastname.value,
+                birthdate: birthdate.value
+            });
+        } catch (error) {
+            console.error('Error during signup:', error);
+        }
+        router.push('/');
     } else {
         alert('Please enter both email and password.');
     }
