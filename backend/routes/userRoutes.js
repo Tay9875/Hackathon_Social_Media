@@ -1,33 +1,20 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+const router = express.Router();
 const User = require("../models/userModel");
 const { v4: uuidv4 } = require("uuid");
-const Chat = require("../models/commentModel");
-const Post = require("../models/postModel");
-const Token = require("../models/tokenModel");
 
-const app = express();
-app
-    .use(cors())
-    .use(express.json());
-
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('✅ Connecté à MongoDB Atlas'))
-    .catch(err => console.error('❌ Erreur MongoDB:', err));
-
-app.get('/api/users', async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await User.find();
     res.json(users);
 });
 
-app.get('/api/users/:uuid', async (req, res) => {
+router.get('/:uuid', async (req, res) => {
     const user = await User.findByUuid(req.params.uuid);
     res.json(user);
 });
 
-app.post('/api/users', async (req, res) => {
+router.post('/', async (req, res) => {
     const { firstName, lastName, gender, birthDate, email, adress, avatar, password, description } = req.body;
     if(!firstName || !lastName || !birthDate || !email || !password) return res.status(400).json({ message: 'Missing required fields' });
     try {
@@ -38,7 +25,7 @@ app.post('/api/users', async (req, res) => {
     }
 });
 
-app.put('/api/users/:uuid', async (req, res) => {
+router.put('/:uuid', async (req, res) => {
     const { firstName, lastName, gender, birthDate, adress, avatar, password, description } = req.body;
     const { uuid } = req.params;
     try {
@@ -48,3 +35,5 @@ app.put('/api/users/:uuid', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 })
+
+module.exports = router;
