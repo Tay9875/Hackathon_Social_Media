@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        default: uuidv4(),
+        default: uuidv4,
     },
     firstName: {
         type: String,
@@ -70,13 +70,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        default: uuidv4(),
+        default: uuidv4,
     },
 })
-
-userSchema.statics.findByUuid = function (uuid) {
-    return this.findOne({ uuid });
-};
 
 module.exports = mongoose.model('User', userSchema);
 

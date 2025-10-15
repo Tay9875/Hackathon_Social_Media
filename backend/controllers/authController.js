@@ -2,7 +2,6 @@
 const crypto = require("crypto");
 const User = require("../models/userModel");
 const { sign } = require("../utils/JsonWebToken");
-const { v4: uuidv4 } = require("uuid");
 
 // 🔐 fonction utilitaire pour hacher un mot de passe
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
@@ -27,7 +26,6 @@ exports.signup = async (req, res) => {
     const { salt, hash } = hashPassword(password);
 
     const newUser = await User.create({
-      uuid: uuidv4(),
       firstName,
       lastName,
       gender,
