@@ -19,13 +19,13 @@ const chatSchema = new mongoose.Schema({
         default: Date.now,
     },
     createdBy: {
-        type: User.schema,
+        type: String,//User.schema,
         required: true,
     },
-    profile: {
-        type: User.schema,
-        required: true,
-    }
+    //profile: {
+    //    type: User.schema,
+    //    required: true,
+    //}
 });
 
 module.exports = mongoose.model("Chat", chatSchema);
