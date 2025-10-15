@@ -61,7 +61,6 @@ const userSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
         default: "I'm a new user",
         maxLength: 250,
         trim: true
