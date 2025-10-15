@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:uuid', async (req, res) => {
-    const user = await User.findByUuid(req.params.uuid);
+    const user = await User.findOne({ uuid: req.params.uuid });
     res.json(user);
 });
 
@@ -35,5 +35,10 @@ router.put('/:uuid', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 })
+
+// router.get('/adresses', async (req,res) => {
+//     const adresses = await User.find({ adress: { $exists: true } });
+//     res.status(200).json(adresses);
+// })
 
 module.exports = router;

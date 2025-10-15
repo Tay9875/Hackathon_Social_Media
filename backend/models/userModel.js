@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
             message: 'Invalid email address',
         },
     },
-    adress: {
+    address: {
         type: String,
         default: "I'm a new user",
         maxLength: 250,
@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema({
         default: uuidv4(),
     },
 })
+
+userSchema.statics.findByUuid = function (uuid) {
+    return this.findOne({ uuid });
+};
 
 module.exports = mongoose.model('User', userSchema);
 
