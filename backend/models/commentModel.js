@@ -21,6 +21,7 @@ const chatSchema = new mongoose.Schema({
     createdBy: {
         type: String,//User.schema,
         required: true,
+        unique: false,
     },
     //profile: {
     //    type: User.schema,
