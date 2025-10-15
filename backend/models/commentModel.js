@@ -1,13 +1,12 @@
 const mongoose = require("mongoose");
-const User = require("./userModel");
 const { v4: uuidv4 } = require("uuid");
 
-const chatSchema = new mongoose.Schema({
+const commentSchema = new mongoose.Schema({
     uuid: {
         type: String,
         required: true,
         unique: true,
-        default: uuidv4(),
+        default: uuidv4,
     },
     message: {
         type: String,
@@ -19,13 +18,15 @@ const chatSchema = new mongoose.Schema({
         default: Date.now,
     },
     createdBy: {
-        type: User.schema,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
     profile: {
-        type: User.schema,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     }
 });
 
-module.exports = mongoose.model("Chat", chatSchema);
+module.exports = mongoose.model("Comment", commentSchema);
