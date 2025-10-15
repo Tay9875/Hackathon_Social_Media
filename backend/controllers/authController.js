@@ -33,8 +33,7 @@ exports.signup = async (req, res) => {
       email,
       adress,
       avatar,
-      passwordHash: hash,
-      passwordSalt: salt,
+      password,
       description,
     });
 
