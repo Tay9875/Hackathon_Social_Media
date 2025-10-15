@@ -12,7 +12,7 @@ const tokenSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    token: {
+    tokenValue: {
         type: String,
         required: true,
     },

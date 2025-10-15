@@ -13,13 +13,16 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    images : {
+        type: Array,
+    },
     createdAt: {
         type: Date,
         required: true,
         default: Date.now,
     },
     createdBy: {
-        type: User.schema,
+        type: User.schema.uuid,
         required: true,
     },
 });

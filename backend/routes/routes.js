@@ -37,3 +37,14 @@ app.post('/api/users', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+app.put('/api/users/:uuid', async (req, res) => {
+    const { firstName, lastName, gender, birthDate, adress, avatar, password, description } = req.body;
+    const { uuid } = req.params;
+    try {
+        const updatedUser = await User.updateOne({ uuid }, { firstName, lastName, gender, birthDate, adress, avatar, password, description });
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+})
