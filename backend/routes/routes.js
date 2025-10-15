@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const User = require("../models/userModel");
 const { v4: uuidv4 } = require("uuid");
-const Chat = require("../models/chatModel");
+const Chat = require("../models/commentModel");
 const Post = require("../models/postModel");
 const Token = require("../models/tokenModel");
 
