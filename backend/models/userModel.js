@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        default: uuidv4(),
+        default: uuidv4,
     },
     firstName: {
         type: String,
@@ -37,9 +37,9 @@ const userSchema = new mongoose.Schema({
             message: 'Invalid email address',
         },
     },
-    adress: {
+    address: {
         type: String,
-        default: "I'm a new user",
+        default: "But where do I live though?!",
         maxLength: 250,
         trim: true
     },
@@ -61,11 +61,51 @@ const userSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
         default: "I'm a new user",
         maxLength: 250,
         trim: true
     },
-})
+    token: {
+        type: String,
+        required: true,
+        unique: true,
+        default: uuidv4,
+    }
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
+
+// class User {
+//     constructor(uuid, email, firstName, lastName, gender, birthDate, address, avatar, password, description) {
+//         this.uuid = uuid;
+//         this.email = email;
+//         this.firstName = firstName;
+//         this.lastName = lastName;
+//         this.gender = gender;
+//     }
+
+//     async create() {
+//         const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, address, avatar, password, description });
+//         return newUser;
+//     }
+    
+//     async update(uuid, email, firstName, lastName, gender, birthDate, address, avatar, password, description) {
+//         const updatedUser = await User.updateOne({ uuid }, { email, firstName, lastName, gender, birthDate, address, avatar, password, description });
+//         return updatedUser;
+//     }
+    
+//     async delete(uuid) {
+//         const deletedUser = await User.deleteOne({ uuid });
+//         return deletedUser;
+//     }
+
+//     async find(uuid) {
+//         const user = await User.findOne({ uuid });
+//         return user;
+//     }
+    
+//     async findAll() {
+//         const users = await User.find();
+//         return users;
+//     }
+// }
