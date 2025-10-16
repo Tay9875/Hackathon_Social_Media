@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded-lg shadow p-6 mb-6 max-w-xl mx-auto">
+    <div class="bg-white rounded-lg shadow p-6 mb-6 w-full">
         <div class="flex items-center mb-4">
             <img
                 class="w-12 h-12 rounded-full mr-3"
