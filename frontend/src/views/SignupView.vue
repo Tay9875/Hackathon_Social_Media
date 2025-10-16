@@ -3,24 +3,13 @@ import { addUser } from '@/api/signupApi';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const avatarUrl = ref(null);
+const avatarUrl = ref('');
 const firstname = ref('');
 const lastname = ref('');
 const email = ref('');
 const password = ref('');
 const birthdate = ref('');
 const gender = ref('');
-
-const onAvatarChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            avatarUrl.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-};
 
 const router = useRouter();
 const handleSignup = () => {
@@ -47,7 +36,7 @@ const handleSignup = () => {
 </script>
 
 <template>
-    <div class="min-h-[calc(100vh-120px)] flex justify-center">
+    <div class="min-h-[calc(100vh-128px)] flex justify-center">
         <div class="max-w-screen-xl m-0 bg-white shadow sm:rounded-lg flex justify-center flex-1">
             <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
                 <div class="flex flex-col items-center">
@@ -57,23 +46,22 @@ const handleSignup = () => {
                     <div class="w-full flex-1 mt-8">
                         <form @submit.prevent="handleSignup()" class="mx-auto flex flex-col gap-3.5">
                             <div class="flex flex-col items-center mb-4">
-                              <label class="relative cursor-pointer">
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  class="hidden"
-                                  @change="onAvatarChange"
-                                />
-                                <div class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200">
-                                  <img
-                                    v-if="avatarUrl"
-                                    :src="avatarUrl"
-                                    alt="Avatar"
-                                    class="w-full h-full object-cover rounded-full"
-                                  />
-                                  <span v-else class="text-gray-400">Avatar</span>
+                                <div class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200 mb-2">
+                                    <img
+                                        v-if="avatarUrl"
+                                        :src="avatarUrl"
+                                        alt="Avatar"
+                                        class="w-full h-full object-cover rounded-full"
+                                        @error="avatarUrl = ''"
+                                    />
+                                    <span v-else class="text-gray-400">Avatar</span>
                                 </div>
-                              </label>
+                                <input
+                                    class="w-full px-4 py-2 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                    type="text"
+                                    placeholder="Avatar image URL"
+                                    v-model="avatarUrl"
+                                />
                             </div>
                             <div class="flex space-x-4">
                               <input
