@@ -25,6 +25,14 @@ const tokenSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    userAgent: {
+        type: String,
+        required: true,
+    },
+    ipAddress: {
+        type: String,
+        required: true,
+    },
     userUuid: {
         type: String,
         required: true,
