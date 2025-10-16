@@ -22,7 +22,7 @@ router.get('/:uuid', async (req, res) => {
 router.get('/profile/:uuid', async (req, res) => {
     try {
         const profile = await User.findOne({ uuid: req.params.uuid });
-        const comments = await Comment.find({ profile: profile.uuid})
+        const comments = await Comment.find({ profile: profile._id})
             .populate("createdBy", "uuid firstName lastName avatar")
             .sort({ createdAt: -1 }); // à modifier pour augmenter la vitesse de la requête
         res.status(200).json(comments);
@@ -46,8 +46,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-//modify comment if user created comment
-router.put('/:uuid', async (req, res) => {
+//modify comment
+router.put('/:uuid', authMiddleware, async (req, res) => {
     const { message } = req.body;
     const { uuid } = req.params;
     try {
