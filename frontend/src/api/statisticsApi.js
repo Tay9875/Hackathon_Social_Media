@@ -1,22 +1,12 @@
 const API_USERS_URL = 'http://localhost:3000/api/users';
 
-// FAKE DATA
-const fakeUsers = [
-    { id: 1, name: 'Alice', age: 30, gender: 'female', address: '123 Main St' },
-    { id: 2, name: 'Bob', age: 25, gender: 'male' },
-    { id: 3, name: 'Charlie', age: 35, gender: 'male', address: '456 Oak Ave' },
-    { id: 4, name: 'Diana', age: 28, gender: 'female', address: '789 Pine Rd' },
-    { id: 5, name: 'Eve', age: 22, gender: 'female' },
-];
-
 export async function getUsers() {
     try {
-        // const response = await fetch(`${API_USERS_URL}`);
-        // if (!response.ok) {
-        //     throw new Error(`HTTP error! status: ${response.status}`);
-        // }
-        // return await response.json();
-        return fakeUsers; // Return fake data for testing
+        const response = await fetch(`${API_USERS_URL}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
     } catch (error) {
         console.error('Error while retrieving users:', error);
         throw error;
@@ -84,8 +74,18 @@ export async function getAverageAge(users) {
             }
         }
 
-        const totalAge = users.reduce((acc, user) => acc + (user.age || 0), 0);
-        return users.length ? totalAge / users.length : 0;
+        const currentYear = new Date().getFullYear();
+        const ages = users
+            .map(user => {
+            if (user.birthDate) {
+                const birthYear = new Date(user.birthDate).getFullYear();
+                return currentYear - birthYear;
+            }
+            return null;
+            })
+            .filter(age => age !== null);
+        const totalAge = ages.reduce((acc, age) => acc + age, 0);
+        return ages.length ? (totalAge / ages.length) : 0;
     } catch (error) {
         console.error("Error while retrieving users by age:", error);
         throw error;
