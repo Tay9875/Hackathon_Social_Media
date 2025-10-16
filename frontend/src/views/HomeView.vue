@@ -1,23 +1,57 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import PostList from '@/components/PostList.vue'
+import { ref, onMounted } from "vue";
+import PostList from "@/components/PostList.vue";
+import { getUsers } from "@/api/userApi.js";
 
-// Dummy posts data (replace with API call if needed)
-const posts = ref([])
+const posts = ref([]);
+const userlist = ref([]);
 
-onMounted(() => {
-    // Example: fetch posts from API
-    // fetch('/api/posts').then(res => res.json()).then(data => posts.value = data)
-    posts.value = [
-        { id: 1, user: 'Alice', content: 'Hello world!' },
-        { id: 2, user: 'Bob', content: 'Vue is awesome!' }
-    ]
-})
+onMounted(async () => {
+  try {
+    userlist.value = await getUsers();
+  } catch (e) {
+    console.error(e);
+  }
+  posts.value = [
+    { id: 1, user: "Alice", content: "Hello world!" },
+    { id: 2, user: "Bob", content: "Vue is awesome!" },
+    { id: 3, user: "Max", content: "test" },
+    { id: 4, user: "Bob", content: "Vue is awesome!" },
+    { id: 5, user: "Bob", content: "Vue is awesome!" },
+  ];
+});
 </script>
 
 <template>
-    <div>
-        <h2>User Posts</h2>
-        <PostList :posts="posts" />
+  <div class="bg-gray-100 min-h-screen py-10">
+    <div class="container mx-auto px-6">
+      <div class="flex flex-col xl:flex-row gap-8 items-start">
+        <aside
+          class="bg-white rounded-lg shadow p-6 w-full xl:w-64 max-h-[calc(100vh-6rem)] overflow-y-auto sticky top-20"
+        >
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Utilisateurs</h2>
+          <ul class="space-y-3 text-sm text-gray-700">
+            <li
+              v-for="user in userlist"
+              :key="user.id"
+              class="flex items-center gap-3"
+            >
+              <img
+                :src="user.avatar || 'https://via.placeholder.com/40'"
+                alt="Avatar"
+                class="w-10 h-10 rounded-full object-cover bg-gray-200 flex-shrink-0"
+              />
+              <span class="truncate">
+                {{ user.firstName }} {{ user.lastName }}
+              </span>
+            </li>
+          </ul>
+        </aside>
+        <section class="flex-1 w-full">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">Publications</h2>
+          <PostList :posts="posts" />
+        </section>
+      </div>
     </div>
+  </div>
 </template>
