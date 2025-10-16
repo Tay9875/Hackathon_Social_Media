@@ -10,6 +10,14 @@ router.get('/', async (req, res) => {
     res.status(200).json(tokens);
 });
 
+router.get("/check", authMiddleware, async (req, res) => {
+  try {
+    res.status(200).json({ message: "Token is valid", userUuid: req.userUuid });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/:uuid', async (req, res) => {
     const token = await Token.findOne({ uuid: req.params.uuid });
     res.status(200).json(token);
@@ -59,11 +67,4 @@ router.delete("/", authMiddleware, async (req, res) => {
     }
 });
 
-router.get("/check", authMiddleware, async (req, res) => {
-  try {
-    res.status(200).json({ message: "Token is valid", userUuid: req.userUuid });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 module.exports = router;

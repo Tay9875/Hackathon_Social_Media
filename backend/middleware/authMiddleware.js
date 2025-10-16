@@ -3,7 +3,7 @@ const Token = require("../models/tokenModel");
 const authMiddleware = async (req, res, next) => {
   try {
     const tokenValue = req.cookies?.authToken || (req.headers["authorization"]?.replace("Bearer ", "") ?? null);
-
+    
     if (!tokenValue) return res.status(401).json({ message: "No token provided" });
 
     const token = await Token.findOne({ tokenValue });

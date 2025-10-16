@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/userModel");
 const { v4: uuidv4 } = require("uuid");
+const authMiddleware = require("../middleware/authMiddleware");
 
 //retrieve all users
 router.get('/', async (req, res) => {
@@ -48,5 +49,10 @@ router.delete('/:uuid', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 })
+
+// router.get('/me', authMiddleware, async (req, res) => {
+//     const user = await User.findOne({ uuid: req.userUuid });
+//     res.status(200).json(user);
+// });
 
 module.exports = router;
