@@ -1,37 +1,64 @@
+
 <template>
-    <div class="max-w-xl mx-auto p-8 bg-white rounded-lg shadow-md">
+    <div class="m-8 mt-24 p-8 bg-white rounded-lg shadow-md">
         <div v-if="user">
-            <h1 class="text-3xl font-bold mb-4">{{ user.name }}</h1>
-            <p class="mb-2"><span class="font-semibold">Email:</span> {{ user.email }}</p>
-            <p class="mb-2"><span class="font-semibold">Username:</span> {{ user.username }}</p>
-            <p class="mb-2"><span class="font-semibold">Bio:</span> {{ user.bio }}</p>
+            <div class="flex items-center gap-4 mb-4">
+                <img :src="user.avatar || 'https://randomuser.me/api/portraits/lego/1.jpg'" alt="Avatar" class="w-16 h-16 rounded-full border" />
+                <div>
+                    <h1 class="text-3xl font-bold">{{ user.firstName }} {{ user.lastName }}</h1>
+                    <p class="text-gray-500 text-sm">{{ user.email }}</p>
+                </div>
+            </div>
+            <div class="mb-2"><span class="font-semibold">Genre :</span> {{ user.gender }}</div>
+            <div class="mb-2"><span class="font-semibold">Date de naissance :</span> {{ formatDate(user.birthDate) }}</div>
+            <div class="mb-2"><span class="font-semibold">Adresse :</span> {{ user.address }}</div>
+            <div class="mb-2"><span class="font-semibold">Description :</span> {{ user.description }}</div>
         </div>
         <div v-else>
-            <p class="text-gray-500">Loading user information...</p>
+            <p class="text-gray-500">Chargement du profil...</p>
         </div>
 
         <div class="mt-8">
             <h2 class="text-xl font-bold mb-4">Commentaires</h2>
             <form @submit.prevent="addComment" class="mb-6 flex flex-col gap-2">
                 <textarea v-model="newComment" placeholder="Ajouter un commentaire..." class="border rounded p-2" rows="2"></textarea>
-                <button type="submit" class="self-end bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Envoyer</button>
+                <button type="submit" class="self-end bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">Envoyer</button>
             </form>
             <div v-if="comments.length">
-                <Comment
-                    v-for="comment in comments"
-                    :key="comment.id"
-                    :author="comment.author"
-                    :content="comment.content"
-                    :createdAt="comment.createdAt"
-                />
+                <div v-for="comment in comments" :key="comment.id" class="relative group">
+                    <Comment
+                        :author="comment.author"
+                        :content="comment.message"
+                        :createdAt="comment.createdAt"
+                    />
+                    <div v-if="isAuthor(comment)" class="absolute top-2 right-2 flex gap-2 opacity-80 group-hover:opacity-100">
+                        <button @click="editComment(comment)" class="text-xs px-2 py-1 bg-yellow-400 rounded hover:bg-yellow-500">Modifier</button>
+                        <button @click="deleteComment(comment.id)" class="text-xs px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">Supprimer</button>
+                    </div>
+                </div>
             </div>
             <div v-else class="text-gray-400">Aucun commentaire pour ce profil.</div>
+
+            <!-- Modal édition -->
+            <div v-if="editingComment" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                <div class="bg-white p-6 rounded shadow-lg w-80">
+                    <h3 class="text-lg font-bold mb-2">Modifier le commentaire</h3>
+                    <textarea v-model="editContent" class="border rounded p-2 w-full mb-4" rows="3"></textarea>
+                    <div class="flex justify-end gap-2">
+                        <button @click="saveEdit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Enregistrer</button>
+                        <button @click="cancelEdit" class="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400">Annuler</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
+
 <script>
 import Comment from '../components/Comment.vue';
+import { fetchComments, addComment as apiAddComment, updateComment, deleteComment } from '../api/commentApi.js';
+import { getUserByUuid } from '../api/userApi.js';
 
 export default {
     name: 'ProfileView',
@@ -42,87 +69,83 @@ export default {
             comments: [],
             newComment: '',
             loadingComments: false,
+            editingComment: null,
+            editContent: '',
         };
     },
     async created() {
-        const username = this.$route.params.username;
-        this.fetchUserProfile(username);
-        await this.fetchComments(username);
+        const uuid = this.$route.path.split('/').pop();
+        await this.fetchUserProfile(uuid);
+        await this.fetchComments();
     },
     methods: {
-        fetchUserProfile(username) {
-            // Replace with actual API call using username
-            const users = {
-                johndoe: {
-                    name: 'John Doe',
-                    email: 'john.doe@example.com',
-                    username: 'johndoe',
-                    bio: 'Web developer and social media enthusiast.',
-                },
-                thomluck: {
-                    name: 'ThomLuck',
-                    email: 'thom.luck@example.com',
-                    username: 'thomluck',
-                    bio: 'Designer and photographer.',
-                },
-            };
-            this.user = users[username] || null;
+        formatDate(date) {
+            if (!date) return '';
+            const d = new Date(date);
+            return d.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
         },
-        async fetchComments(username) {
+        async fetchUserProfile(uuid) {
+            try {
+                this.user = await getUserByUuid(uuid);
+            } catch (e) {
+                this.user = null;
+            }
+        },
+        async fetchComments() {
             this.loadingComments = true;
-            // Simule un appel API (remplacer par un vrai fetch plus tard)
-            await new Promise(resolve => setTimeout(resolve, 700));
-            // Mock : commentaires selon le profil
-            if (username === 'johndoe') {
-                this.comments = [
-                    {
-                        id: 1,
-                        author: {
-                            name: 'Alice',
-                            avatar: 'https://randomuser.me/api/portraits/women/1.jpg',
-                        },
-                        content: 'Super profil, bravo !',
-                        createdAt: new Date(Date.now() - 3600 * 1000).toISOString(),
-                    },
-                    {
-                        id: 2,
-                        author: {
-                            name: 'Bob',
-                            avatar: 'https://randomuser.me/api/portraits/men/2.jpg',
-                        },
-                        content: 'Très inspirant !',
-                        createdAt: new Date(Date.now() - 7200 * 1000).toISOString(),
-                    },
-                ];
-            } else if (username === 'thomluck') {
-                this.comments = [
-                    {
-                        id: 3,
-                        author: {
-                            name: 'Charlie',
-                            avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
-                        },
-                        content: 'J’adore tes photos !',
-                        createdAt: new Date(Date.now() - 1800 * 1000).toISOString(),
-                    }
-                ];
-            } else {
+            try {
+                if (!this.user) return;
+                const comments = await fetchComments(this.user.uuid);
+                this.comments = Array.isArray(comments) ? comments : [];
+            } catch (e) {
                 this.comments = [];
             }
             this.loadingComments = false;
         },
-        addComment() {
-            if (!this.newComment.trim()) return;
-            this.comments.unshift({
-                id: Date.now(),
-                author: {
-                    name: 'Moi',
-                    avatar: 'https://randomuser.me/api/portraits/lego/1.jpg',
-                },
-                content: this.newComment,
-                createdAt: new Date().toISOString(),
-            });
-            this.newComment = '';
+        async addComment() {
+            if (!this.newComment.trim() || !this.user) return;
+            const comment = {
+                message: this.newComment,
+                profileUuid: this.user.uuid,
+            };
+            try {
+                const newComment = await apiAddComment(comment);
+                if (newComment) {
+                    this.comments.unshift(newComment);
+                    this.newComment = '';
+                }
+            } catch (e) {}
+        },
+        isAuthor(comment) {
+            return comment.userIsAuthor;
+        },
+        editComment(comment) {
+            this.editingComment = comment;
+            this.editContent = comment.message;
+        },
+        async saveEdit() {
+            if (!this.editContent.trim() || !this.editingComment) return;
+            try {
+                const updated = await updateComment(this.editingComment.uuid, this.editContent);
+                if (updated) {
+                    const idx = this.comments.findIndex(c => c.uuid === this.editingComment.uuid);
+                    if (idx !== -1) this.comments[idx].message = this.editContent;
+                }
+            } catch (e) {}
+            this.editingComment = null;
+            this.editContent = '';
+        },
+        cancelEdit() {
+            this.editingComment = null;
+            this.editContent = '';
+        },
+        async deleteComment(commentUuid) {
+            try {
+                const deleted = await deleteComment(commentUuid);
+                if (deleted) {
+                    this.comments = this.comments.filter(c => c.uuid !== commentUuid);
+                }
+            } catch (e) {}
         },
     },
 };
