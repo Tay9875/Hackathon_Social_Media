@@ -8,6 +8,7 @@ import { RouterLink } from 'vue-router'
             <RouterLink class="font-semibold text-gray-800 hover:text-blue-600 transition-colors" to="/">Accueil</RouterLink>
             <RouterLink class="font-semibold text-gray-800 hover:text-blue-600 transition-colors" to="/login">Connexion</RouterLink>
             <RouterLink class="font-semibold text-gray-800 hover:text-blue-600 transition-colors" to="/signup">Inscription</RouterLink>
+            <RouterLink class="font-semibold text-gray-800 hover:text-blue-600 transition-colors" to="/statistics">Statistics</RouterLink>
         </div>
     </nav>
 </template>
