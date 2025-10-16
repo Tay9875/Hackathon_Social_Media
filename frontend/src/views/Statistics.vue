@@ -1,25 +1,3 @@
-<!-- <script setup>
-import { addUser } from '@/api/signupApi';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { Bar } from 'vue-chartjs'
-import { getUsers } from '@/api/statisticsApi';
-
-const users = ref([]);
-
-
-
-const createGraph = () => {
-        try {
-            getUsers().then(response => {
-                users.value = response.data;
-            });
-        } catch (error) {
-            console.error('Error during signup:', error);
-        }
-    }  
-</script> -->
-
 <template>
   <div class="container mx-auto p-6">
     <div class="grid grid-cols-3 gap-6 mb-8">
@@ -35,10 +13,6 @@ const createGraph = () => {
         <div class="text-gray-500 text-xs mb-2">Nombre d'utilisateurs</div>
         <div class="text-2xl font-bold">{{ usersCount }}</div>
       </div>
-<!--       <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-        <div class="text-gray-500 text-xs mb-2">Statistique personnalisée</div>
-        <div class="text-2xl font-bold">-</div>
-      </div> -->
     </div>
     <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
         <div class="text-gray-500 text-xs mb-2">Répartition des utilisateurs par genre</div>
@@ -52,7 +26,8 @@ const createGraph = () => {
 <script>
 import { Doughnut } from 'vue-chartjs'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import { getUsers, getUsersByGender, getUsersCount, getAddressesCount, getAverageAge } from '@/api/statisticsApi';
+import {  getUsersByGender, getUsersCount, getAddressesCount, getAverageAge } from '@/api/statisticsApi';
+import { getUsers } from '@/api/userApi.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
