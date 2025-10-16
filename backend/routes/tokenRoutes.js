@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const Token = require("../models/tokenModel");
 const User = require("../models/userModel");
+const authMiddleware = require("../middleware/authMiddleware");
 
 router.get('/', async (req, res) => {
     const tokens = await Token.find();
