@@ -1,14 +1,25 @@
-const { verify } = require("../utils/JsonWebToken");
+const Token = require("../models/tokenModel");
 
-module.exports = function authMiddleware(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) return res.status(401).json({ message: "Token manquant" });
+const authMiddleware = async (req, res, next) => {
+  try {
+    const tokenValue = req.cookies?.authToken || (req.headers["authorization"]?.replace("Bearer ", "") ?? null);
 
-  const token = authHeader.split(" ")[1]; // format: Bearer <token>
-  const decoded = verify(token);
+    if (!tokenValue) return res.status(401).json({ message: "No token provided" });
 
-  if (!decoded) return res.status(401).json({ message: "Token invalide ou expiré" });
+    const token = await Token.findOne({ tokenValue });
+    if (!token) return res.status(401).json({ message: "Invalid token" });
+    if (token.expiresAt < new Date()) return res.status(401).json({ message: "Token expired" });
 
-  req.user = decoded;
-  next();
+    const userAgent = req.headers["user-agent"];
+    const ipAddress = req.ip;
+
+    if (token.userAgent !== userAgent || token.ipAddress !== ipAddress) return res.status(401).json({ message: "Session invalid — please re-login" });
+
+    req.userUuid = token.userUuid;
+    next();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
+
+module.exports = authMiddleware;

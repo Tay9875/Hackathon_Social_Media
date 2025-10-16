@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/userModel");
 const Comment = require("../models/commentModel");
+const authMiddleware = require("../middleware/authMiddleware");
 
 //get all comments
 router.get('/', async (req, res) => {
@@ -47,14 +48,21 @@ router.post('/', async (req, res) => {
 });
 
 //modify comment
-router.put('/:uuid', async (req, res) => {
+router.put('/:uuid', authMiddleware, async (req, res) => {
     const { message } = req.body;
     const { uuid } = req.params;
     try {
-        const updatedComment = await Comment.updateOne({ uuid }, { message });
-        res.status(200).json(updatedComment);
+        const comment = await Comment.findOne({ uuid });
+        if (!comment) return res.status(404).json({ message: "Comment not found" });
+    
+        if (comment.createdBy.uuid !== req.userUuid) return res.status(403).json({ message: "You can only edit your own comments" });
+    
+        comment.message = message;
+        await comment.save();
+    
+        res.status(200).json({ message: "Comment updated successfully", comment });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+      res.status(500).json({ error: err.message });
     }
 })
 

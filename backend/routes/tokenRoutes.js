@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const Token = require("../models/tokenModel");
 const User = require("../models/userModel");
-const { v4: uuidv4 } = require("uuid");
 
 router.get('/', async (req, res) => {
     const tokens = await Token.find();
@@ -15,10 +14,51 @@ router.get('/:uuid', async (req, res) => {
     res.status(200).json(token);
 });
 
-router.get('/:tokenValue', async (req, res) => {
-    const token = await Token.findOne({ tokenValue: req.params.tokenValue });
-    if(!token) return res.status(404).json({ message: "Token non trouvé" });
-    if(token.expiresAt < Date.now()) return res.status(400).json({ message: "Token expiré" });
-    res.status(200).json(token);
+router.post("/", async (req, res) => {
+    const { userUuid } = req.body;
+    if (!userUuid) return res.status(400).json({ message: "Missing userUuid" });
+  
+    try {
+        const user = await User.findOne({ uuid: userUuid });
+        if (!user) return res.status(404).json({ message: "User not found" });
+        
+        const userAgent = req.headers["user-agent"] || "unknown";
+        const ipAddress = req.ip || req.socket.remoteAddress;
+        
+        const tokenValue = crypto.randomBytes(32).toString("hex");
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
+        
+        await Token.deleteMany({ userUuid: user.uuid });
+        
+        const newToken = await Token.create({
+          tokenValue,
+          userUuid: user.uuid,
+          userAgent,
+          ipAddress,
+          expiresAt,
+        });
+      
+        res.status(201).json({
+          message: "Token created successfully",
+          token: newToken.tokenValue,
+          expiresAt,
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});  
+
+router.delete("/", authMiddleware, async (req, res) => {
+    try {
+      const tokenValue = req.headers["authorization"].replace("Bearer ", "");
+      await Token.deleteOne({ tokenValue });
+      res.status(200).json({ message: "Logged out successfully" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+});
+
+router.get("/check", authMiddleware, async (req, res) => {
+  res.status(200).json({ message: "Token is valid", userUuid: req.userUuid });
 });
 module.exports = router;

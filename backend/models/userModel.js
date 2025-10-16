@@ -76,7 +76,7 @@ const userSchema = new mongoose.Schema({
 module.exports = mongoose.model('User', userSchema);
 
 // class User {
-//     constructor(uuid, email, firstName, lastName, gender, birthDate, adress, avatar, password, description) {
+//     constructor(uuid, email, firstName, lastName, gender, birthDate, address, avatar, password, description) {
 //         this.uuid = uuid;
 //         this.email = email;
 //         this.firstName = firstName;
@@ -85,12 +85,12 @@ module.exports = mongoose.model('User', userSchema);
 //     }
 
 //     async create() {
-//         const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, adress, avatar, password, description });
+//         const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, address, avatar, password, description });
 //         return newUser;
 //     }
     
-//     async update(uuid, email, firstName, lastName, gender, birthDate, adress, avatar, password, description) {
-//         const updatedUser = await User.updateOne({ uuid }, { email, firstName, lastName, gender, birthDate, adress, avatar, password, description });
+//     async update(uuid, email, firstName, lastName, gender, birthDate, address, avatar, password, description) {
+//         const updatedUser = await User.updateOne({ uuid }, { email, firstName, lastName, gender, birthDate, address, avatar, password, description });
 //         return updatedUser;
 //     }
     

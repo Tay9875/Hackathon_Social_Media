@@ -17,10 +17,10 @@ router.get('/:uuid', async (req, res) => {
 
 //create user
 router.post('/', async (req, res) => {
-    const { firstName, lastName, gender, birthDate, email, adress, avatar, password, description } = req.body;
+    const { firstName, lastName, gender, birthDate, email, address, avatar, password, description } = req.body;
     if(!firstName || !lastName || !birthDate || !email || !password) return res.status(400).json({ message: 'Missing required fields' });
     try {
-        const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, adress, avatar, password, description });
+        const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, address, avatar, password, description });
         res.status(201).json(newUser);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -29,10 +29,10 @@ router.post('/', async (req, res) => {
 
 //modify user
 router.put('/:uuid', async (req, res) => {
-    const { firstName, lastName, gender, birthDate, adress, avatar, password, description } = req.body;
+    const { firstName, lastName, gender, birthDate, address, avatar, password, description } = req.body;
     const { uuid } = req.params;
     try {
-        const updatedUser = await User.updateOne({ uuid }, { firstName, lastName, gender, birthDate, adress, avatar, password, description });
+        const updatedUser = await User.updateOne({ uuid }, { firstName, lastName, gender, birthDate, address, avatar, password, description });
         res.status(200).json(updatedUser);
     } catch (err) {
         res.status(500).json({ error: err.message });
