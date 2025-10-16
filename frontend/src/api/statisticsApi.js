@@ -42,15 +42,14 @@ export async function getUsersByGender(users) {
             } else {
                 throw new Error('Unexpected users format');
             }
-
-            const genderCount = users.reduce((acc, user) => {
-                const gender = user.gender || 'unknown';
-                acc[gender] = (acc[gender] || 0) + 1;
-                return acc;
-            }, {});
-
-            return genderCount;
         }
+        
+        const genderCount = users.reduce((acc, user) => {
+            const gender = user.gender || 'unknown';
+            acc[gender] = (acc[gender] || 0) + 1;
+            return acc;
+        }, {});
+        return genderCount;
     } catch (error) {
         console.error("Error while retrieving users by gender:", error);
         throw error;
