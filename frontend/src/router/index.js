@@ -5,6 +5,7 @@ import LoginView from '../views/LoginView.vue'
 import SignupView from '../views/SignupView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import EditProfileView from '../views/EditProfileView.vue'
+import Statistics from '@/views/Statistics.vue'
 
 function isAuthenticated() {
     return !!localStorage.getItem('token');
@@ -39,6 +40,12 @@ const router = createRouter({
             path: '/profile/:username/edit',
             name: 'profile-edit',
             component: EditProfileView,
+            // meta: { requiresAuth: true },
+        },
+        {
+            path: '/statistics',
+            name: 'statistics',
+            component: Statistics,
             // meta: { requiresAuth: true },
         }
     ],
