@@ -6,7 +6,7 @@
 				<span class="font-semibold text-sm text-gray-800">{{ author.name }}</span>
 				<span class="text-xs text-gray-400">{{ timeAgo }}</span>
 			</div>
-			<div class="text-gray-700 text-sm">{{ content }}</div>
+			<div class="text-gray-700 text-sm text-left">{{ content }}</div>
 		</div>
 	</div>
 </template>
