@@ -46,26 +46,29 @@ router.post('/', async (req, res) => {
     }
 });
 
-//modify comment
 router.put('/:uuid', authMiddleware, async (req, res) => {
-    const token = req.userUuid;
-    console.log(req.userUuid);
     const { message } = req.body;
     const { uuid } = req.params;
+  
     try {
-        const comment = await Comment.findOne({ uuid: req.params.uuid });
-        const user = await User.findOne({ uuid: comment.createdBy });
-        if( token == user.token ){
-            const updatedComment = await Comment.updateOne({ uuid }, { message });
-            res.status(200).json(updatedComment);
-        }
-        else {
-            res.status(403).json({ error: 'User unauthorized to modify this comment' });
-        }
+      const comment = await Comment.findOne({ uuid });
+      if (!comment) {
+        return res.status(404).json({ message: "Comment not found" });
+      }
+      const user = await User.findOne({ uuid: req.userUuid });
+      const ObjectUserOfComment = await User.findOne({ _id: comment.createdBy }).populate("uuid lastName firstName");
+      if (ObjectUserOfComment.uuid !== user.uuid) {
+        return res.status(403).json({ message: "You are not allowed to edit this comment" });
+      }
+  
+      comment.message = message;
+      await comment.save();
+  
+      res.status(200).json({ message: "Comment updated successfully", comment });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+      res.status(500).json({ error: err.message });
     }
-})
+});
 
 //delete a comment
 router.delete('/:uuid', async (req, res) => {
