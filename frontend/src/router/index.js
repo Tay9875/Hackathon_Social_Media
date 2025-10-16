@@ -6,9 +6,10 @@ import SignupView from '../views/SignupView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import EditProfileView from '../views/EditProfileView.vue'
 import Statistics from '@/views/Statistics.vue'
+import { validateToken } from '@/api/tokenApi'
 
 function isAuthenticated() {
-    return !!localStorage.getItem('token');
+    return validateToken(JSON.parse(localStorage.getItem('token')));
 }
 
 const router = createRouter({
