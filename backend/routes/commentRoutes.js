@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../models/userModel");
 const Comment = require("../models/commentModel")
 const authMiddleware = require("../middleware/authMiddleware");
+const Token = require("../models/tokenModel");
 
 //get all comments
 router.get('/', async (req, res) => {
@@ -25,7 +26,22 @@ router.get('/profile/:uuid', async (req, res) => {
         const comments = await Comment.find({ profile: profile._id})
             .populate("createdBy", "uuid firstName lastName avatar")
             .sort({ createdAt: -1 }); // à modifier pour augmenter la vitesse de la requête ?
-        res.status(200).json(comments);
+
+        let currentUserUuid = null;
+        const tokenValue = req.cookies?.authToken || req.headers["authorization"]?.replace("Bearer ", "");
+        if (tokenValue) {
+            const token = await Token.findOne({ tokenValue });
+            if (token && token.expiresAt > new Date()) currentUserUuid = token.userUuid;
+        }
+
+        const commentsWithFlag = comments.map(comment => ({
+            ...comment.toObject(),
+            userIsAuthor: currentUserUuid ? comment.createdBy?.uuid === currentUserUuid : false
+        }));
+
+        res.status(200).json(commentsWithFlag);
+
+        res.status(200).json(commentsWithFlag);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
