@@ -10,6 +10,11 @@ router.get('/', async (req, res) => {
     res.json(users);
 });
 
+router.get('/me', authMiddleware, async (req, res) => {
+    const user = await User.findOne({ uuid: req.userUuid });
+    res.status(200).json(user);
+});
+
 //retrieve user with uuid
 router.get('/:uuid', async (req, res) => {
     const user = await User.findOne({ uuid: req.params.uuid });
@@ -49,10 +54,5 @@ router.delete('/:uuid', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 })
-
-// router.get('/me', authMiddleware, async (req, res) => {
-//     const user = await User.findOne({ uuid: req.userUuid });
-//     res.status(200).json(user);
-// });
 
 module.exports = router;
