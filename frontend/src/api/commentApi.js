@@ -1,13 +1,8 @@
-const API_CHAT_URL = 'http://localhost:3000/api/chat';            
+const API_CHAT_URL = 'http://localhost:3000/api/comment';            
 
-const chats = ref([])
-const message = ref('')
-const createdAt = ref('')
-const createdBy = ref('')
-const profile = ref('')
-const uuid = ref('')
 
- export async function fetchChats() {
+
+ export async function fetchComments() {
     try {
         const response = await fetch(API_CHAT_URL);
         if (!response.ok) {
@@ -19,7 +14,7 @@ const uuid = ref('')
     }
 }
 
-export async function addChat() {
+export async function addComment() {
     try {
         const response = await fetch(API_CHAT_URL, {
             method: 'POST',
