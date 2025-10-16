@@ -1,4 +1,4 @@
-require("dotenv").config();
+const crypto = require("crypto");
 const express = require("express");
 const router = express.Router();
 const Token = require("../models/tokenModel");
@@ -60,6 +60,10 @@ router.delete("/", authMiddleware, async (req, res) => {
 });
 
 router.get("/check", authMiddleware, async (req, res) => {
-  res.status(200).json({ message: "Token is valid", userUuid: req.userUuid });
+  try {
+    res.status(200).json({ message: "Token is valid", userUuid: req.userUuid });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 module.exports = router;
