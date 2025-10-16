@@ -6,7 +6,7 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 // const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
-// const tokenRoutes = require("./routes/tokenRoutes");
+const tokenRoutes = require("./routes/tokenRoutes");
 
 const app = express();
 app
@@ -16,7 +16,7 @@ app
     .use("/api/auth", authRoutes)
     // .use("/api/posts", postRoutes)
     .use("/api/comments", commentRoutes)
-    // .use("/api/tokens", tokenRoutes)
+    .use("/api/tokens", tokenRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ Connecté à MongoDB Atlas'))

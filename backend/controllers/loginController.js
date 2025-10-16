@@ -11,11 +11,7 @@ const login = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: "User not found" });
     
-        const hashToVerify = crypto
-          .pbkdf2Sync(password, user.passwordSalt, 100000, 64, "sha512")
-          .toString("hex");
-    
-        if (hashToVerify !== user.passwordHash) return res.status(401).json({ message: "Password incorrect" });
+        if (password !== user.password) return res.status(401).json({ message: "Password incorrect" });
     
         const userAgent = req.headers["user-agent"] || "unknown";
         const ipAddress = req.ip || req.socket.remoteAddress;
