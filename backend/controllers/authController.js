@@ -1,5 +1,6 @@
+const crypto = require("crypto");
 const User = require("../models/userModel");
-const { sign } = require("../utils/JsonWebToken");
+const Token = require("../models/tokenModel");
 const hashPassword = require("../utils/hashPassword");
 
 const signup = async (req, res) => {
@@ -27,11 +28,25 @@ const signup = async (req, res) => {
       description,
     });
 
-    const token = sign({ uuid: newUser.uuid, email: newUser.email }, "24h");
+    const userAgent = req.headers["user-agent"] || "unknown";
+    const ipAddress = req.ip || req.socket.remoteAddress || "";
+    const tokenValue = crypto.randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
+
+    await Token.deleteMany({ userUuid: newUser.uuid });
+    await Token.create({
+      tokenValue,
+      userUuid: newUser.uuid,
+      userAgent,
+      ipAddress,
+      expiresAt,
+      tokenName: "auth",
+    });
 
     res.status(201).json({
       message: "User created successfully",
-      token,
+      token: tokenValue,
+      expiresAt,
       user: newUser,
     });
   } catch (err) {

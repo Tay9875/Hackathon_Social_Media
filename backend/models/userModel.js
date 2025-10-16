@@ -70,8 +70,8 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         default: uuidv4,
-    },
-})
+    }
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
 

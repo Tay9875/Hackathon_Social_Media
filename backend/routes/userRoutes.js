@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const User = require("../models/userModel");
+const { v4: uuidv4 } = require("uuid");
 
 //retrieve all users
 router.get('/', async (req, res) => {

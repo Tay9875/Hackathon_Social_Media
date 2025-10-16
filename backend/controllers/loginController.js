@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const User = require("../models/userModel");
-const { sign } = require("../utils/JsonWebToken");
+const Token = require("../models/tokenModel");
 
 const login = async (req, res) => {
     try {
@@ -17,9 +17,15 @@ const login = async (req, res) => {
     
         if (hashToVerify !== user.passwordHash) return res.status(401).json({ message: "Password incorrect" });
     
-        const token = sign({ uuid: user.uuid, email: user.email }, "24h");
-    
-        res.status(200).json({ message: "Login successful", token, user });
+        const userAgent = req.headers["user-agent"] || "unknown";
+        const ipAddress = req.ip || req.socket.remoteAddress;
+        const tokenValue = crypto.randomBytes(32).toString("hex");
+        const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24);
+
+        await Token.deleteMany({ userUuid: user.uuid });
+        await Token.create({ tokenValue, userUuid: user.uuid, userAgent, ipAddress, expiresAt, tokenName: "auth" });
+
+        res.status(200).json({ message: "Login successful", token: tokenValue, expiresAt, user });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

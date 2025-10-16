@@ -2,7 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const User = require("../models/userModel");
-const Comment = require("../models/commentModel");
+const Comment = require("../models/commentModel")
+const authMiddleware = require("../middleware/authMiddleware");
 
 //get all comments
 router.get('/', async (req, res) => {

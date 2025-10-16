@@ -6,7 +6,7 @@ const tokenSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        default: uuidv4(),
+        default: uuidv4,
     },
     tokenName: {
         type: String,
