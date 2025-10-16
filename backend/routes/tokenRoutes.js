@@ -40,11 +40,12 @@ router.post("/", async (req, res) => {
         await Token.deleteMany({ userUuid: user.uuid });
         
         const newToken = await Token.create({
-          tokenValue,
+          tokenName: "auth",
+          tokenValue :tokenValue,
           userUuid: user.uuid,
-          userAgent,
-          ipAddress,
-          expiresAt,
+          userAgent: userAgent,
+          ipAddress: ipAddress,
+          expiresAt: expiresAt,
         });
       
         res.status(201).json({
