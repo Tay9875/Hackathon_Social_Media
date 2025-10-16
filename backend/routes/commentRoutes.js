@@ -24,7 +24,7 @@ router.get('/profile/:uuid', async (req, res) => {
         const profile = await User.findOne({ uuid: req.params.uuid });
         const comments = await Comment.find({ profile: profile._id})
             .populate("createdBy", "uuid firstName lastName avatar")
-            .sort({ createdAt: -1 }); // à modifier pour augmenter la vitesse de la requête
+            .sort({ createdAt: -1 }); // à modifier pour augmenter la vitesse de la requête ?
         res.status(200).json(comments);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -48,11 +48,20 @@ router.post('/', async (req, res) => {
 
 //modify comment
 router.put('/:uuid', authMiddleware, async (req, res) => {
+    const token = req.userUuid;
+    console.log(req.userUuid);
     const { message } = req.body;
     const { uuid } = req.params;
     try {
-        const updatedComment = await Comment.updateOne({ uuid }, { message });
-        res.status(200).json(updatedComment);
+        const comment = await Comment.findOne({ uuid: req.params.uuid });
+        const user = await User.findOne({ uuid: comment.createdBy });
+        if( token == user.token ){
+            const updatedComment = await Comment.updateOne({ uuid }, { message });
+            res.status(200).json(updatedComment);
+        }
+        else {
+            res.status(403).json({ error: 'User unauthorized to modify this comment' });
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
