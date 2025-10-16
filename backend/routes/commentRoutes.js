@@ -33,12 +33,13 @@ router.get('/profile/:uuid', async (req, res) => {
 
 //create a new comment (à modifier car retourne erreur)
 router.post('/', async (req, res) => {
-    const { message, createdBy} = req.body;
-    if(!message || !createdBy ) return res.status(400).json({ message: 'Missing required fields' });
+    const { message, createdBy: createdByUuid, profile: profileUuid } = req.body;
+    if(!message || !createdByUuid || !profileUuid) return res.status(400).json({ message: 'Missing required fields' });
     try {
-        const createdBy = await User.findOne({ uuid: createdBy });
-        const profile = await User.findOne({ uuid: profile });
-        const newComment = await Comment.create({ uuid: uuidv4(), message, createdBy, profile });
+        const createdByUser = await User.findOne({ uuid: createdByUuid });
+        const profileUser = await User.findOne({ uuid: profileUuid });
+        if (!createdByUser || !profileUser) return res.status(404).json({ message: 'User not found' });
+        const newComment = await Comment.create({ message, createdBy: createdByUser._id, profile: profileUser._id });
         res.status(201).json(newComment);
     } catch (err) {
         res.status(500).json({ error: err.message });
