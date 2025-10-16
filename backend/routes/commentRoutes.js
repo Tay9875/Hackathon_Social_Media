@@ -47,10 +47,45 @@ router.post('/', async (req, res) => {
     }
 });
 
+<<<<<<< Updated upstream
 //modify comment
 router.put('/:uuid', authMiddleware, async (req, res) => {
+=======
+
+
+//middleware to extract token
+/*
+app.use((req, res, next) => {
+  const authHeader = req.headers['authorization'];
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1]; // retrieves after "Bearer "
+    req.token = token; // token stocked
+  } else {
+    req.token = null;
+  }
+
+  next();
+});
+*/
+/*
+// Exemple de route qui utilise le token
+app.get("/secure-data", (req, res) => {
+  if (!req.token) {
+    return res.status(401).json({ error: "Token manquant ou invalide" });
+  }
+
+  // Ici tu peux vérifier le token (ex: via jwt.verify)
+  res.json({ message: "Token reçu avec succès !", token: req.token });
+});
+*/
+
+//modify comment if user created comment
+router.put('/:uuid', async (req, res) => {
+>>>>>>> Stashed changes
     const { message } = req.body;
     const { uuid } = req.params;
+    console.log(req.headers);
     try {
         const comment = await Comment.findOne({ uuid });
         if (!comment) return res.status(404).json({ message: "Comment not found" });
