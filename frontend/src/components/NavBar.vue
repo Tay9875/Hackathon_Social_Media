@@ -25,7 +25,7 @@ import { RouterLink } from "vue-router";
         </RouterLink>
         <RouterLink
           to="/signup"
-          class="text-sm/6 text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-colors duration-200 flex items-center"
+          class="text-sm/6 text-white bg-indigo-500 hover:bg-blue-600 px-4 py-2 rounded transition-colors duration-200 flex items-center"
         >
           Sign Up <span aria-hidden="true" class="ml-2">&rarr;</span>
         </RouterLink>
