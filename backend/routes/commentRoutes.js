@@ -48,10 +48,10 @@ router.post('/', async (req, res) => {
 
 //modify comment
 router.put('/:uuid', async (req, res) => {
-    const { message, createdBy} = req.body;
+    const { message } = req.body;
     const { uuid } = req.params;
     try {
-        const updatedComment = await Comment.updateOne({ uuid }, { message, createdBy});
+        const updatedComment = await Comment.updateOne({ uuid }, { message });
         res.status(200).json(updatedComment);
     } catch (err) {
         res.status(500).json({ error: err.message });
