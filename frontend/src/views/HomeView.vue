@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import PostList from "@/components/PostList.vue";
 import { getUsers } from "@/api/userApi.js";
+import { RouterLink } from "vue-router";
 
 const posts = ref([]);
 const userlist = ref([]);
@@ -37,12 +38,15 @@ onMounted(async () => {
               class="flex items-center gap-3"
             >
               <img
-                :src="user.avatar || 'https://via.placeholder.com/40'"
+                :src="user.avatar || 'https://randomuser.me/api/portraits/lego/1.jpg'"
                 alt="Avatar"
                 class="w-10 h-10 rounded-full object-cover bg-gray-200 flex-shrink-0"
               />
               <span class="truncate">
-                {{ user.firstName }} {{ user.lastName }}
+                <RouterLink :to="`/profile/${user.uuid}`" class="hover:underline"
+                >
+                 {{ user.firstName }} {{ user.lastName }}
+            </RouterLink>
               </span>
             </li>
           </ul>
