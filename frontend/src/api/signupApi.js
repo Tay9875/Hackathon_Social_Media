@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 const saltRounds = 10;
 
-const API_SIGNUP_URL = `${import.meta.env.VITE_API_URL}/signup`;
+const API_SIGNUP_URL = `${import.meta.env.VITE_API_URL}/auth/signup`;
 
 
 export async function addUser(user) {
