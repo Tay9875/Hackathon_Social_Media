@@ -22,7 +22,7 @@ export async function fetchComments(profileUuid) {
 
 export async function addComment(comment) {
     try {
-        const response = await fetch(API_COMMENT_URL, {
+        const response = await fetch(API_COMMENT_URL + '/profile/' + comment.profile, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
