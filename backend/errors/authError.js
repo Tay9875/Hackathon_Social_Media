@@ -1,4 +1,4 @@
-import AppError from "./appError";
+const AppError = require("./appError");
 
 class AuthError extends AppError {
     static missingToken() {
