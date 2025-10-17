@@ -6,6 +6,15 @@ import { RouterLink } from "vue-router";
 
 const posts = ref([]);
 const userlist = ref([]);
+const isUserListOpen = ref(false);
+
+const toggleUserList = () => {
+  isUserListOpen.value = !isUserListOpen.value;
+};
+
+const closeUserList = () => {
+  isUserListOpen.value = false;
+};
 
 onMounted(async () => {
   try {
@@ -24,13 +33,62 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="bg-gray-100 min-h-screen py-10">
+  <div class="bg-gray-100 min-h-screen py-10 relative">
+    <div
+      v-if="isUserListOpen"
+      class="fixed inset-0 bg-black/40 z-40 sm:hidden"
+      @click="closeUserList"
+    ></div>
+    <button
+      class="sm:hidden fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-blue-600 text-white shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      type="button"
+      @click="toggleUserList"
+      aria-label="Afficher la liste des utilisateurs"
+    >
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 14c3.866 0 7-1.79 7-4s-3.134-4-7-4-7 1.79-7 4 3.134 4 7 4Zm0 0c-3.866 0-7 1.79-7 4m7-4c3.866 0 7 1.79 7 4m-7 0c0 2.21-1.79 4-4 4m4-4c0 2.21 1.79 4 4 4"
+        />
+      </svg>
+    </button>
     <div class="container mx-auto px-6">
-      <div class="flex flex-col xl:flex-row gap-8 items-start">
+      <div class="flex flex-col sm:flex-row gap-8 items-start">
         <aside
-          class="bg-white rounded-lg shadow p-6 w-full xl:w-64 max-h-[calc(100vh-6rem)] overflow-y-auto sticky top-20"
+          :class="[
+            'bg-white rounded-lg shadow p-6 sm:w-64 max-h-[calc(100vh-6rem)] overflow-y-auto sm:sticky sm:top-20',
+            isUserListOpen ? 'block fixed inset-x-4 top-24 z-50 sm:static sm:block' : 'hidden sm:block'
+          ]"
         >
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Utilisateurs</h2>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Utilisateurs</h2>
+            <button
+              v-if="isUserListOpen"
+              type="button"
+              class="sm:hidden text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+              @click="closeUserList"
+              aria-label="Fermer la liste des utilisateurs"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
           <ul class="space-y-3 text-sm text-gray-700">
             <li
               v-for="user in userlist"
@@ -40,13 +98,16 @@ onMounted(async () => {
               <img
                 :src="user.avatar || 'https://randomuser.me/api/portraits/lego/1.jpg'"
                 alt="Avatar"
-                class="w-10 h-10 rounded-full object-cover bg-gray-200 flex-shrink-0"
+                class="w-10 h-10 rounded-full object-cover bg-gray-200"
               />
               <span class="truncate">
-                <RouterLink :to="`/profile/${user.uuid}`" class="hover:underline"
+                <RouterLink
+                  :to="`/profile/${user.uuid}`"
+                  class="hover:underline"
+                  @click="closeUserList"
                 >
-                 {{ user.firstName }} {{ user.lastName }}
-            </RouterLink>
+                  {{ user.firstName }} {{ user.lastName }}
+                </RouterLink>
               </span>
             </li>
           </ul>
