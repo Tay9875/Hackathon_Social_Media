@@ -56,12 +56,12 @@ export default {
       this.addressesCount = await getAddressesCount(userlist)
       this.averageAge = await getAverageAge(userlist)
       this.chartData = {
-        labels: ['Male', 'Female'],
+        labels: ['Male', 'Female', 'Other'],
         datasets: [
           {
             label: 'Number of users',
-            backgroundColor: ['#f87979', '#7CBB00'],
-            data: [nbUsersByGender.male, nbUsersByGender.female]
+            backgroundColor: ['#f87979', '#7CBB00', '#00ADEF'],
+            data: [nbUsersByGender.male, nbUsersByGender.female, nbUsersByGender.other]
           }
         ]
       }
