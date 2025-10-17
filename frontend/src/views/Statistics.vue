@@ -2,27 +2,27 @@
   <div class="container mx-auto p-6 space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div class="bg-white rounded-lg shadow p-6 flex flex-col items-start">
-        <div class="text-gray-500 text-xs mb-2">Âge moyen</div>
+        <div class="text-gray-500 text-xs mb-2">Average Age</div>
   <div class="text-2xl font-bold">{{ averageAgeDisplay }}</div>
       </div>
       <div class="bg-white rounded-lg shadow p-6 flex flex-col items-start">
-        <div class="text-gray-500 text-xs mb-2">Adresses renseignées</div>
+        <div class="text-gray-500 text-xs mb-2">Addresses Provided</div>
         <div class="text-2xl font-bold">{{ addressesCount }}</div>
       </div>
       <div class="bg-white rounded-lg shadow p-6 flex flex-col items-start">
-        <div class="text-gray-500 text-xs mb-2">Nombre d'utilisateurs</div>
+        <div class="text-gray-500 text-xs mb-2">Number of Users</div>
         <div class="text-2xl font-bold">{{ usersCount }}</div>
       </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-        <div class="text-gray-500 text-xs mb-4">Répartition des utilisateurs par genre</div>
+        <div class="text-gray-500 text-xs mb-4">User Distribution by Gender</div>
         <div class="w-full h-72">
           <Doughnut v-if="loaded" :data="chartData" :options="doughnutOptions" />
         </div>
       </div>
       <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-        <div class="text-gray-500 text-xs mb-4">Répartition des utilisateurs par date de création</div>
+        <div class="text-gray-500 text-xs mb-4">User Distribution by Creation Date</div>
         <div class="w-full h-72">
           <Chart
             v-if="loaded"

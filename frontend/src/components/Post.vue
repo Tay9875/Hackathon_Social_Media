@@ -39,7 +39,7 @@
             </button>
         </div>
         <div v-if="comments && comments.length" class="mt-4">
-            <div class="text-xs text-gray-500 mb-1">Commentaires :</div>
+            <div class="text-xs text-gray-500 mb-1">Comments:</div>
             <Comment
                 v-for="(comment, idx) in comments"
                 :key="idx"
