@@ -12,20 +12,13 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    images : {
-        type: Array,
-    },
+    images : [{
+        type: String,
+    }],
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
-    },
-    comments: {
-        type: Array,
-        ref: "Comment",
-        default: [],
-        unique: false,
-        required: false,
     },
 }, { timestamps: true });
 

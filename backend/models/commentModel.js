@@ -12,22 +12,22 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now,
-    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
         unique: false,
     },
-    profile: {
+    targetId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
         required: true,
+        refPath: "targetModel"
+    },
+    targetModel: {
+        type: String,
+        required: true,
+        enum: ["User", "Post"],
     }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Comment", commentSchema);
