@@ -1,97 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/userModel");
-const Comment = require("../models/commentModel")
 const authMiddleware = require("../middleware/authMiddleware");
-const Token = require("../models/tokenModel");
-const CommentError = require("../errors/commentError");
+const { getAllComments, getCommentByUuid, getCommentsByProfileUuid, getCommentsByPostUuid, createCommentOnProfile, createCommentOnPost, updateComment, deleteComment } = require("../controllers/commentController");
 
-//get all comments
-router.get('/', async (req, res) => {
-    const comments = await Comment.find().sort({ createdAt: 1});
-    res.json(comments);
-});
-
-//get a specific comment with comment.uuid
-router.get('/:uuid', async (req, res) => {
-    const comment = await Comment.findOne({ uuid: req.params.uuid })
-        .populate("createdBy", "uuid firstName lastName avatar")
-        .populate("profile", "uuid firstName lastName avatar");
-    res.status(200).json(comment);
-});
-
-//get a profile's comments 
-router.get('/profile/:uuid', async (req, res) => {
-    try {
-        const profile = await User.findOne({ uuid: req.params.uuid });
-        const comments = await Comment.find({ profile: profile._id})
-            .populate("createdBy", "uuid firstName lastName avatar")
-            .sort({ createdAt: -1 }); // à modifier pour augmenter la vitesse de la requête ?
-
-        let currentUserUuid = null;
-        const tokenValue = req.cookies?.authToken || req.headers["authorization"]?.replace("Bearer ", "");
-        if (tokenValue) {
-            const token = await Token.findOne({ tokenValue });
-            if (token && token.expiresAt > new Date()) currentUserUuid = token.userUuid;
-        }
-
-        const commentsWithFlag = comments.map(comment => ({
-            ...comment.toObject(),
-            userIsAuthor: currentUserUuid ? comment.createdBy?.uuid === currentUserUuid : false
-        }));
-
-        res.status(200).json(commentsWithFlag);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-//create a new comment (à modifier car retourne erreur)
-router.post('/', async (req, res) => {
-    try {
-        const { message, createdBy: createdByUuid, profile: profileUuid } = req.body;
-        if (message.length > 500) throw CommentError.messageTooLong();
-        if(!message || !createdByUuid || !profileUuid) throw CommentError.missingFields();
-
-        const createdByUser = await User.findOne({ uuid: createdByUuid });
-        const profileUser = await User.findOne({ uuid: profileUuid });
-        if (!createdByUser || !profileUser) throw CommentError.notFound();
-        const newComment = await Comment.create({ message, createdBy: createdByUser._id, profile: profileUser._id });
-        res.status(201).json(newComment);
-    } catch (err) {
-        res.status(err.statusCode).json({ error: err.message });
-    }
-});
-
-router.put('/:uuid', authMiddleware, async (req, res) => {
-    const { message } = req.body;
-    const { uuid } = req.params;
-  
-    try {
-      const comment = await Comment.findOne({ uuid });
-      if (!comment) throw CommentError.notFound();
-
-      const user = await User.findOne({ uuid: req.userUuid });
-      const ObjectUserOfComment = await User.findOne({ _id: comment.createdBy }).populate("uuid lastName firstName");
-      if (ObjectUserOfComment.uuid !== user.uuid) throw CommentError.unauthorizedEdit();
-  
-      comment.message = message;
-      await comment.save();
-  
-      res.status(200).json({ message: "Comment updated successfully", comment });
-    } catch (err) {
-      res.status(err.statusCode).json({ error: err.message });
-    }
-});
-
-//delete a comment
-router.delete('/:uuid', async (req, res) => {
-    try {
-        const deletedComment = await Comment.deleteOne({ uuid: req.params.uuid });
-        res.status(200).json(deletedComment);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-})
+router
+    .get('/profile/:uuid', getCommentsByProfileUuid)
+    .get('/post/:uuid', getCommentsByPostUuid)
+    .get('/:uuid', getCommentByUuid)
+    .get('/', getAllComments)
+    .post('/profile/:uuid', authMiddleware, createCommentOnProfile)
+    .post('/post/:uuid', authMiddleware, createCommentOnPost)
+    .put('/:uuid', authMiddleware, updateComment)
+    .delete('/:uuid', authMiddleware, deleteComment)
 
 module.exports = router;

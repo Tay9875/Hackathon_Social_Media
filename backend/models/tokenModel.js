@@ -16,11 +16,6 @@ const tokenSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now,
-    },
     expiresAt: {
         type: Date,
         required: true,
@@ -37,6 +32,6 @@ const tokenSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Token', tokenSchema);

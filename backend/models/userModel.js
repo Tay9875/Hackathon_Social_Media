@@ -66,38 +66,3 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
-
-// class User {
-//     constructor(uuid, email, firstName, lastName, gender, birthDate, address, avatar, password, description) {
-//         this.uuid = uuid;
-//         this.email = email;
-//         this.firstName = firstName;
-//         this.lastName = lastName;
-//         this.gender = gender;
-//     }
-
-//     async create() {
-//         const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, address, avatar, password, description });
-//         return newUser;
-//     }
-    
-//     async update(uuid, email, firstName, lastName, gender, birthDate, address, avatar, password, description) {
-//         const updatedUser = await User.updateOne({ uuid }, { email, firstName, lastName, gender, birthDate, address, avatar, password, description });
-//         return updatedUser;
-//     }
-    
-//     async delete(uuid) {
-//         const deletedUser = await User.deleteOne({ uuid });
-//         return deletedUser;
-//     }
-
-//     async find(uuid) {
-//         const user = await User.findOne({ uuid });
-//         return user;
-//     }
-    
-//     async findAll() {
-//         const users = await User.find();
-//         return users;
-//     }
-// }
