@@ -1,4 +1,4 @@
-const API_COMMENT_URL = 'http://localhost:3000/api/comments';            
+ const API_COMMENT_URL = `${import.meta.env.VITE_API_URL}/comments`;
 
 export async function fetchComments(profileUuid) {
     try {

@@ -1,4 +1,4 @@
-const API_TOKEN_URL = 'http://localhost:3000/api/tokens';            
+const API_TOKEN_URL = `${import.meta.env.VITE_API_URL}/token/`;           
 
 export async function validateToken(token) {
     try {
