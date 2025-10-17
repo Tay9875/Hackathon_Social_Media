@@ -38,7 +38,18 @@ const createUser = async (req, res) => {
         if(!firstName || !lastName || !birthDate || !email || !password) throw UserError.missingFields();
         const existingUser = await User.findOne({ email });
         if (existingUser) throw UserError.alreadyExists();
-        const newUser = await User.create({ uuid: uuidv4(), firstName, lastName, gender, birthDate, email, address, avatar, password, description });
+        const newUser = await User.create({ 
+            uuid: uuidv4(), 
+            firstName: firstName, 
+            lastName: lastName, 
+            gender: gender, 
+            birthDate: birthDate, 
+            email: email, 
+            address: address, 
+            avatar: avatar, 
+            password: password, 
+            description: description 
+        });
         res.status(201).json(newUser);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -60,9 +71,11 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const deletedUser = await User.deleteOne({ uuid: req.params.uuid });
+        const deletedUser = await User.findOne({ uuid: req.params.uuid });
         if (!deletedUser) throw UserError.notFound();
+        console.log(deletedUser.uuid, req.userUuid);
         if (deletedUser.uuid !== req.userUuid) throw UserError.unauthorized();
+        await deletedUser.deleteOne();
         res.status(200).json({ message: "User deleted successfully" });
     } catch (err) {
         res.status(500).json({ error: err.message });
