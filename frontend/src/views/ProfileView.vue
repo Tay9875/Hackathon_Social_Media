@@ -32,14 +32,14 @@
                             </span>
 
                             <span v-if="isOwnProfile" class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-medium">
-                                Vous
+                                You
                             </span>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-3">
                         <div class="hidden sm:block text-right">
-                            <div class="text-xs text-gray-500">Commentaires</div>
+                            <div class="text-xs text-gray-500">Comments</div>
                             <div class="text-lg font-semibold text-gray-800">{{ comments ? comments.length : 0 }}</div>
                         </div>
 
@@ -50,9 +50,9 @@
                                 class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"></path></svg>
-                                Modifier
+                                Edit Profile
                             </button>
-                            <div v-else class="text-sm text-gray-500">Visiteur</div>
+                            <div v-else class="text-sm text-gray-500">Visitor</div>
                         </div>
                     </div>
                 </div>
@@ -64,16 +64,16 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 11.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"></path>
                         </svg>
                         <div class="text-left">
-                            <div class="text-xs text-gray-500">Adresse</div>
-                            <div class="font-medium">{{ user && user.address ? user.address : 'Non renseignée' }}</div>
+                            <div class="text-xs text-gray-500">Address</div>
+                            <div class="font-medium">{{ user && user.address ? user.address : 'Not provided' }}</div>
                         </div>
                     </div>
 
                     <div class="flex items-start gap-3">
                         <svg class="w-5 h-5 mt-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8a9 9 0 110-18 9 9 0 010 18z"></path></svg>
                         <div class="text-left">
-                            <div class="text-xs text-gray-500">A propos</div>
-                            <div class="font-medium">{{ user && user.description ? user.description : 'Aucune description' }}</div>
+                            <div class="text-xs text-gray-500">About</div>
+                            <div class="font-medium">{{ user && user.description ? user.description : 'No description' }}</div>
                         </div>
                     </div>
                 </div>
@@ -83,57 +83,33 @@
         <!-- Comments section -->
         <div class="mt-8">
             <div class="flex items-center justify-between">
-                <h2 class="text-lg font-bold text-gray-800">Commentaires</h2>
+                <h2 class="text-lg font-bold text-gray-800">Comments</h2>
                 <span class="text-sm text-gray-500">{{ comments ? comments.length : 0 }} total</span>
             </div>
 
-            <form @submit.prevent="addComment" class="mt-4 bg-white rounded-lg p-4 shadow-sm">
-                <textarea
-                    v-model="newComment"
-                    placeholder="Laissez un commentaire..."
-                    class="w-full resize-none min-h-[72px] border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                ></textarea>
 
-                <div class="mt-3 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-md shadow hover:bg-indigo-600">
-                            Envoyer
-                        </button>
-                        <button type="button" @click="newComment=''" class="text-sm text-gray-500 hover:text-gray-700">Effacer</button>
-                    </div>
-
-                    <div class="text-xs text-gray-400">Soyez respectueux dans vos commentaires</div>
-                </div>
-            </form>
+            <AddComment
+                v-if="user"
+                :userUuid="user.uuid"
+                @comment-added="handleCommentAdded"
+            />
 
             <div class="mt-6 space-y-4">
                 <div v-if="comments && comments.length">
-                    <div v-for="comment in comments" :key="comment.uuid" class="bg-white p-4 rounded-lg shadow-sm group hover:shadow-md transition">
-                        <div class="flex items-start gap-3">
-                            <img :src="comment.author && comment.author.avatar ? comment.author.avatar : 'https://images.unsplash.com/photo-1545996124-1b9b4b3c7f7b?auto=format&fit=crop&w=80&q=80'" alt="author" class="w-10 h-10 rounded-full object-cover" />
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between gap-4">
-                                    <div>
-                                        <div class="text-sm font-semibold text-gray-800">{{ comment.author ? (comment.author.firstName + ' ' + comment.author.lastName) : 'Anonyme' }}</div>
-                                        <div class="text-xs text-gray-400">{{ comment.createdAt ? new Date(comment.createdAt).toLocaleString('fr-FR') : '' }}</div>
-                                    </div>
-
-                                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                                        <button v-if="isAuthor(comment)" @click="editComment(comment)" class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200">Modifier</button>
-                                        <button v-if="isAuthor(comment)" @click="deleteComment(comment.uuid)" class="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">Supprimer</button>
-                                    </div>
-                                </div>
-
-                                <div class="mt-3 text-gray-700 whitespace-pre-wrap">
-                                    {{ comment.message }}
-                                </div>
-                            </div>
+                    <div v-for="comment in comments" :key="comment.uuid" class="group relative">
+                        <Comment
+                            :author="comment.createdBy"
+                            :content="comment.message"
+                            :createdAt="comment.createdAt"
+                        />
+                        <div class="absolute right-2 top-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition ml-14 mt-2">
+                            <button v-if="isAuthor(comment)" @click="editComment(comment)" class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200">Modifier</button>
+                            <button v-if="isAuthor(comment)" @click="deleteComment(comment.uuid)" class="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">Supprimer</button>
                         </div>
                     </div>
                 </div>
-
                 <div v-else class="text-center text-gray-400 py-8">
-                    Aucun commentaire pour ce profil.
+                    No comments yet. Be the first to comment!
                 </div>
             </div>
         </div>
@@ -141,11 +117,11 @@
         <!-- Modal édition commentaire -->
         <div v-if="editingComment" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div class="bg-white w-full max-w-lg rounded-xl p-6 shadow-lg">
-                <h3 class="text-lg font-semibold text-gray-800">Modifier le commentaire</h3>
+                <h3 class="text-lg font-semibold text-gray-800">Edit Comment</h3>
                 <textarea v-model="editContent" class="mt-3 w-full border border-gray-200 rounded-md p-3 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-indigo-200"></textarea>
                 <div class="mt-4 flex justify-end gap-3">
-                    <button @click="cancelEdit" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Annuler</button>
-                    <button @click="saveEdit" class="px-4 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600">Enregistrer</button>
+                    <button @click="cancelEdit" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Cancel</button>
+                    <button @click="saveEdit" class="px-4 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600">Save</button>
                 </div>
             </div>
         </div>
@@ -154,22 +130,22 @@
         <div v-if="editingProfile" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-xl">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold">Modifier le profil</h3>
-                    <button @click="cancelProfileEdit" class="text-gray-500 hover:text-gray-700">Fermer</button>
+                    <h3 class="text-lg font-semibold">Edit Profile</h3>
+                    <button @click="cancelProfileEdit" class="text-gray-500 hover:text-gray-700">Close</button>
                 </div>
 
                 <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input v-model="profileDraft.firstName" placeholder="Prénom" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none" />
-                    <input v-model="profileDraft.lastName" placeholder="Nom" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none" />
+                    <input v-model="profileDraft.firstName" placeholder="First Name" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none" />
+                    <input v-model="profileDraft.lastName" placeholder="Last Name" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none" />
                     <input v-model="profileDraft.email" placeholder="Email" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none col-span-1 md:col-span-2" />
-                    <input v-model="profileDraft.address" placeholder="Adresse" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none col-span-1 md:col-span-2" />
+                    <input v-model="profileDraft.address" placeholder="Address" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none col-span-1 md:col-span-2" />
                     <input v-model="profileDraft.avatar" placeholder="Avatar URL" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none col-span-1 md:col-span-2" />
                     <textarea v-model="profileDraft.description" placeholder="Description" class="border border-gray-200 rounded-md px-3 py-2 focus:outline-none col-span-1 md:col-span-2"></textarea>
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <button @click="cancelProfileEdit" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Annuler</button>
-                    <button @click="saveProfile" class="px-4 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600">Enregistrer</button>
+                    <button @click="cancelProfileEdit" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Cancel</button>
+                    <button @click="saveProfile" class="px-4 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600">Save</button>
                 </div>
             </div>
         </div>
@@ -179,18 +155,19 @@
 
 <script>
 import Comment from '../components/Comment.vue';
+import AddComment from '../components/AddComment.vue';
 import { fetchComments, addComment as apiAddComment, updateComment, deleteComment } from '../api/commentApi.js';
 import { getUserByUuid, getCurrentUser, updateUser } from '../api/userApi.js';
 
 export default {
     name: 'ProfileView',
-    components: { Comment },
+    components: { Comment, AddComment },
     data() {
         return {
             user: null,
             isOwnProfile: false,
             comments: [],
-            newComment: '',
+            // newComment: '',
             loadingComments: false,
             editingComment: null,
             editContent: '',
@@ -269,19 +246,10 @@ export default {
             }
             this.loadingComments = false;
         },
-        async addComment() {
-            if (!this.newComment.trim() || !this.user) return;
-            const comment = {
-                message: this.newComment,
-                profile: this.user.uuid,
-            };
-            try {
-                const newComment = await apiAddComment(comment);
-                if (newComment) {
-                    this.comments.unshift(newComment);
-                    this.newComment = '';
-                }
-            } catch (e) {}
+        handleCommentAdded(newComment) {
+            if (newComment) {
+                this.comments.unshift(newComment);
+            }
         },
         isAuthor(comment) {
             return comment.userIsAuthor;
