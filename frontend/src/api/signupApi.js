@@ -32,7 +32,7 @@ export async function addUser(user) {
             throw new Error(data.error || 'Failed to signup');
         }
         const newUser = data;
-        localStorage.setItem('token', JSON.stringify(newUser.token));
+        localStorage.setItem('token', newUser.token);
     } catch (error) {
         console.error('Error adding user:', error);
         throw error;
