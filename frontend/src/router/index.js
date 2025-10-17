@@ -8,7 +8,14 @@ import Statistics from '@/views/Statistics.vue'
 import { validateToken } from '@/api/tokenApi'
 
 async function isAuthenticated() {
-    return await validateToken(JSON.parse(localStorage.getItem('token')));
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return false;
+        const valid = await validateToken(token);
+        return !!valid;
+    } catch (e) {
+        return false;
+    }
 }
 
 const router = createRouter({
