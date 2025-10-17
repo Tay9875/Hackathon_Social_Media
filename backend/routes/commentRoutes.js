@@ -4,6 +4,7 @@ const User = require("../models/userModel");
 const Comment = require("../models/commentModel")
 const authMiddleware = require("../middleware/authMiddleware");
 const Token = require("../models/tokenModel");
+const CommentError = require("../errors/commentError");
 
 //get all comments
 router.get('/', async (req, res) => {
@@ -50,6 +51,7 @@ router.get('/profile/:uuid', async (req, res) => {
 //create a new comment (à modifier car retourne erreur)
 router.post('/', async (req, res) => {
     const { message, createdBy: createdByUuid, profile: profileUuid } = req.body;
+    if (message.length > 1000) throw CommentError.MessageTooBig();
     if(!message || !createdByUuid || !profileUuid) return res.status(400).json({ message: 'Missing required fields' });
     try {
         const createdByUser = await User.findOne({ uuid: createdByUuid });
@@ -68,9 +70,7 @@ router.put('/:uuid', authMiddleware, async (req, res) => {
   
     try {
       const comment = await Comment.findOne({ uuid });
-      if (!comment) {
-        return res.status(404).json({ message: "Comment not found" });
-      }
+      if (!comment) throw CommentError.notFound();
       const user = await User.findOne({ uuid: req.userUuid });
       const ObjectUserOfComment = await User.findOne({ _id: comment.createdBy }).populate("uuid lastName firstName");
       if (ObjectUserOfComment.uuid !== user.uuid) {
