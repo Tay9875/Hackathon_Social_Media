@@ -6,9 +6,9 @@ import { validateToken } from "@/api/tokenApi";
 const isAuthenticated = ref(false);
 const mobileMenuOpen = ref(false);
 
-function checkTokenValidity() {
+async function checkTokenValidity() {
   const token = localStorage.getItem("token");
-  isAuthenticated.value = token && validateToken(token);
+  isAuthenticated.value = !!token && await validateToken(token);
 }
 
 function toggleMobileMenu() {
