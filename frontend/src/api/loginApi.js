@@ -1,11 +1,14 @@
-API_LOGIN_URL = 'http://localhost:3000/api/login';
+import bcrypt from 'bcryptjs';
 
+const API_LOGIN_URL = `${import.meta.env.VITE_API_URL}/login`;
+const saltRounds = 10;
 
 export async function loginUser(email, password) {
-  const response = await fetch('http://localhost:3000/api/login', {
+  const hash = bcrypt.hashSync(password, saltRounds);
+  const response = await fetch(API_LOGIN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password: hash })
   });
   if (!response.ok) {
     throw new Error('Login failed');
