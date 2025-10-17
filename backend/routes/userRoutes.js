@@ -3,16 +3,27 @@ const router = express.Router();
 const User = require("../models/userModel");
 const { v4: uuidv4 } = require("uuid");
 const authMiddleware = require("../middleware/authMiddleware");
+const UserError = require("../errors/userError");
 
 //retrieve all users
 router.get('/', async (req, res) => {
-    const users = await User.find();
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
     res.json(users);
 });
 
 router.get('/me', authMiddleware, async (req, res) => {
-    const user = await User.findOne({ uuid: req.userUuid });
-    res.status(200).json(user);
+    try {
+        const user = await User.findOne({ uuid: req.userUuid });
+        if (!user) throw UserError.notFound();
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 //retrieve user with uuid
@@ -24,8 +35,10 @@ router.get('/:uuid', async (req, res) => {
 //create user
 router.post('/', async (req, res) => {
     const { firstName, lastName, gender, birthDate, email, address, avatar, password, description } = req.body;
-    if(!firstName || !lastName || !birthDate || !email || !password) return res.status(400).json({ message: 'Missing required fields' });
+    if(!firstName || !lastName || !birthDate || !email || !password) throw UserError.missingFields();
     try {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) throw UserError.alreadyExists();
         const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, address, avatar, password, description });
         res.status(201).json(newUser);
     } catch (err) {

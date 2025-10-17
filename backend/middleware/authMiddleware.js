@@ -1,19 +1,21 @@
 const Token = require("../models/tokenModel");
+const AuthError = require("../errors/authError");
+const TokenError = require("../errors/tokenError");
 
 const authMiddleware = async (req, res, next) => {
   try {
     const tokenValue = req.cookies?.authToken || (req.headers["authorization"]?.replace("Bearer ", "") ?? null);
     
-    if (!tokenValue) return res.status(401).json({ message: "No token provided" });
+    if (!tokenValue) throw AuthError.missingToken();
 
     const token = await Token.findOne({ tokenValue });
-    if (!token) return res.status(401).json({ message: "Invalid token" });
-    if (token.expiresAt < new Date()) return res.status(401).json({ message: "Token expired" });
+    if (!token) throw TokenError.notFound();
+    if (token.expiresAt < new Date()) throw TokenError.expired();
 
     const userAgent = req.headers["user-agent"];
     const ipAddress = req.ip;
 
-    if (token.userAgent !== userAgent || token.ipAddress !== ipAddress) return res.status(401).json({ message: "Session invalid — please re-login" });
+    if (token.userAgent !== userAgent || token.ipAddress !== ipAddress) throw AuthError.sessionInvalid();
 
     req.userUuid = token.userUuid;
     next();
