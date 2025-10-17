@@ -25,6 +25,13 @@ const postSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    comments: {
+        type: Array,
+        ref: "Comment",
+        default: [],
+        unique: false,
+        required: false,
+    },
 });
 
 module.exports = mongoose.model("Post", postSchema);
