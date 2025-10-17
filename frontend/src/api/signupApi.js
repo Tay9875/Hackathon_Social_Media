@@ -31,7 +31,7 @@ export async function addUser(user) {
         if (!response.ok) {
             throw new Error(data.error || 'Failed to signup');
         }
-        const newUser = await response.json();
+        const newUser = data;
         localStorage.setItem('token', JSON.stringify(newUser.token));
     } catch (error) {
         console.error('Error adding user:', error);
