@@ -27,13 +27,15 @@ export async function addUser(user) {
                 adress: user.address
             })
         });
+        const data = await response.json();
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(data.message || 'Failed to signup');
         }
         const newUser = await response.json();
         localStorage.setItem('token', JSON.stringify(newUser.token));
     } catch (error) {
         console.error('Error adding user:', error);
+        throw error;
     }
 }
 
