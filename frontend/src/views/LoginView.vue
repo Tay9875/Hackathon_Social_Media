@@ -2,23 +2,44 @@
 import { loginUser } from "@/api/loginApi";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+
 const email = ref("");
 const password = ref("");
+
 const errorMessage = ref("");
+const emailError = ref("");
+const passwordError = ref("");
+
 const router = useRouter();
-const handleLogin = async () => {
-  if (email.value && password.value) {
-    try {
-      await loginUser(email.value, password.value);
-    } catch (error) {
-      errorMessage.value =
-        "Login failed. Please check your credentials and try again.";
-      return;
-    }
-    router.push("/");
-  } else {
-    errorMessage.value = "Please enter both email and password.";
+
+const validateFields = () => {
+  let valid = true;
+
+  emailError.value = email.value ? "" : "Email is required";
+  passwordError.value = password.value ? "" : "Password is required";
+
+  if (!email.value || !password.value) {
+    valid = false;
   }
+
+  return valid;
+};
+
+const handleLogin = async () => {
+  emailError.value = "";
+  passwordError.value = "";
+
+  if (!validateFields()) {
+    return;
+  }
+
+  try {
+    await loginUser(email.value, password.value);
+  } catch (error) {
+    errorMessage.value = error + " Please try again.";
+    return;
+  }
+  router.push("/");
 };
 </script>
 
@@ -32,18 +53,24 @@ const handleLogin = async () => {
           <h1 class="text-2xl xl:text-3xl font-extrabold">Login</h1>
           <form @submit.prevent="handleLogin()" class="w-full flex-1 mt-8">
             <div class="mx-auto flex flex-col gap-3.5">
-              <input
-                class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                type="email"
-                placeholder="Email"
-                v-model="email"
-              />
-              <input
-                class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                type="password"
-                placeholder="Password"
-                v-model="password"
-              />
+              <div class="w-full text-left">
+                  <input
+                    class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="email"
+                    placeholder="Email"
+                    v-model="email"
+                  />
+                  <span v-if="emailError" class="text-red-500 text-xs">{{ emailError }}</span>
+              </div>
+              <div class="w-full text-left">
+                  <input
+                    class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="password"
+                    placeholder="Password"
+                    v-model="password"
+                  />
+                  <span v-if="passwordError" class="text-red-500 text-xs">{{ passwordError }}</span>
+              </div>
               <button
                 type="submit"
                 class="cursor-pointer mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"

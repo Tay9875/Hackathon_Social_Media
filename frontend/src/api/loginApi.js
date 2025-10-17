@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 
-const API_LOGIN_URL = `${import.meta.env.VITE_API_URL}/login`;
+const API_LOGIN_URL = `${import.meta.env.VITE_API_URL}/auth/login`;
 const saltRounds = 10;
 
 export async function loginUser(email, password) {
