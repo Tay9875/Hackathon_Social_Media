@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
@@ -12,6 +11,12 @@ const tokenRoutes = require("./routes/tokenRoutes");
 
 const app = express();
 
+const swaggerUiOptions = {
+    explorer: true,
+    customCss:'.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }',
+    customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css'
+}
+
 app
     .use(cors())
     .use(express.json())
@@ -20,7 +25,7 @@ app
     .use("/api/posts", postRoutes)
     .use("/api/comments", commentRoutes)
     .use("/api/tokens", tokenRoutes)
-    .use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    .use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ Connecté à MongoDB Atlas'))
