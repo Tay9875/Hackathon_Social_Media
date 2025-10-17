@@ -10,6 +10,7 @@ const email = ref("");
 const password = ref("");
 const birthdate = ref("");
 const gender = ref("");
+const address = ref("");
 const errorMessage = ref("");
 
 const router = useRouter();
@@ -71,6 +72,7 @@ const handleSignup = async () => {
       gender: gender.value,
       lastname: lastname.value,
       birthdate: birthdate.value,
+      address: address.value,
     });
   } catch (error) {
     errorMessage.value = error.message + ". Please try again.";
@@ -160,10 +162,17 @@ const handleSignup = async () => {
                     <option value="" disabled selected>Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
+                    <option value="other">Other</option>
                   </select>
                   <span v-if="genderError" class="text-red-500 text-xs">{{ genderError }}</span>
                 </div>
               </div>
+              <input
+                  class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                  type="text"
+                  placeholder="Address"
+                  v-model="address"
+                />
               <div class="w-full text-left">
                 <input
                   class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
