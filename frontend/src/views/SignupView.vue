@@ -34,6 +34,23 @@ const validateFields = () => {
     valid = false;
   }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,6}$/;
+  if (email.value && !emailRegex.test(email.value)) {
+    emailError.value = "Invalid email address";
+    valid = false;
+  }
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,64}$/;
+  if (password.value) {
+    if (password.value.length < 8) {
+      passwordError.value = "Password must be at least 8 characters long";
+      valid = false;
+    } else if (!passwordRegex.test(password.value)) {
+      passwordError.value = "The password must contain at least: 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and be 8 to 64 characters long.";
+      valid = false;
+    }
+  }
+
   return valid;
 };
 
@@ -56,7 +73,7 @@ const handleSignup = async () => {
       birthdate: birthdate.value,
     });
   } catch (error) {
-    errorMessage.value = error + " Please try again.";
+    errorMessage.value = error.message + ". Please try again.";
     return;
   }
 
@@ -164,6 +181,9 @@ const handleSignup = async () => {
                   v-model="password"
                 />
                 <span v-if="passwordError" class="text-red-500 text-xs">{{ passwordError }}</span>
+              </div>
+              <div v-if="errorMessage" class="text-red-500 text-sm text-center">
+                {{ errorMessage }}
               </div>
               <button
                 type="submit"
