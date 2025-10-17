@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./userModel");
 const { v4: uuidv4 } = require("uuid");
 
 const postSchema = new mongoose.Schema({
@@ -7,7 +6,7 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        default: uuidv4(),
+        default: uuidv4,
     },
     content: {
         type: String,
@@ -22,7 +21,10 @@ const postSchema = new mongoose.Schema({
         default: Date.now,
     },
     createdBy: {
-        type: User.schema.uuid,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
 });
+
+module.exports = mongoose.model("Post", postSchema);
