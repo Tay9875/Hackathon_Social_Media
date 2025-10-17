@@ -5,6 +5,7 @@ const AuthError = require("../errors/authError");
 const CommentError = require("../errors/commentError");
 const UserError = require("../errors/userError");
 const PostError = require("../errors/postError");
+const Token = require("../models/tokenModel");
 
 const getAllComments = async (req, res) => {
     try {
