@@ -1,11 +1,5 @@
 const API_POST_URL = 'http://localhost:3000/api/post';            
 
-const posts = ref([])
-const content = ref('')
-const createdAt = ref('')
-const createdBy = ref('')
-const images = ref([])
-const uuid = ref('')
 
  export async function fetchPosts() {
     try {
