@@ -8,7 +8,7 @@ router
     .get('/me', authMiddleware, getMe)
     .get('/:uuid', getUserByUuid)
     .post('/', createUser)
-    .put('/:uuid', updateUser)
-    .delete('/:uuid', deleteUser)
+    .put('/:uuid', authMiddleware, updateUser)
+    .delete('/:uuid', authMiddleware, deleteUser)
 
 module.exports = router;
