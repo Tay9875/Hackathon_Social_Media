@@ -4,12 +4,11 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import SignupView from '../views/SignupView.vue'
 import ProfileView from '../views/ProfileView.vue'
-import EditProfileView from '../views/EditProfileView.vue'
 import Statistics from '@/views/Statistics.vue'
 import { validateToken } from '@/api/tokenApi'
 
-function isAuthenticated() {
-    return validateToken(JSON.parse(localStorage.getItem('token')));
+async function isAuthenticated() {
+    return await validateToken(JSON.parse(localStorage.getItem('token')));
 }
 
 const router = createRouter({
@@ -19,7 +18,7 @@ const router = createRouter({
             path: '/',
             name: 'home',
             component: HomeView,
-            // meta: { requiresAuth: true },
+            meta: { requiresAuth: true },
         },
         {
             path: '/login',
@@ -32,22 +31,24 @@ const router = createRouter({
             component: SignupView,
         },
         {
-            path: '/profile/:username',
+            path: '/profile/:uuid',
             name: 'profile',
             component: ProfileView,
-            // meta: { requiresAuth: true },
-        },
-        {
-            path: '/profile/:username/edit',
-            name: 'profile-edit',
-            component: EditProfileView,
-            // meta: { requiresAuth: true },
+            meta: { requiresAuth: true },
         },
         {
             path: '/statistics',
             name: 'statistics',
             component: Statistics,
-            // meta: { requiresAuth: true },
+            meta: { requiresAuth: true },
+        },
+        {
+            path: '/logout',
+            name: 'logout',
+            beforeEnter(to, from, next) {
+                localStorage.removeItem('token');
+                next({ name: 'login' });
+            }
         }
     ],
     scrollBehavior() {
@@ -55,8 +56,8 @@ const router = createRouter({
     },
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.meta.requiresAuth && !isAuthenticated()) {
+router.beforeEach(async (to, from, next) => {
+    if (to.meta.requiresAuth && !await isAuthenticated()) {
         next({ name: 'login' });
     } else {
         next();

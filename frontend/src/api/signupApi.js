@@ -1,7 +1,7 @@
-const API_SIGNUP_URL = 'http://localhost:3000/api/auth/signup';  
-
 import bcrypt from 'bcryptjs';
 const saltRounds = 10;
+
+const API_SIGNUP_URL = `${import.meta.env.VITE_API_URL}/auth/signup`;
 
 
 export async function addUser(user) {

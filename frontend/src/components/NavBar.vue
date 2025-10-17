@@ -1,29 +1,13 @@
 <script setup>
 import { RouterLink } from "vue-router";
 import { ref, onMounted } from "vue";
+import { validateToken } from "@/api/tokenApi";
 
 const isAuthenticated = ref(false);
 
 function checkTokenValidity() {
-  // const token = localStorage.getItem("token");
-  // if (token) {
-  //   fetch("/api/auth/validate", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   })
-  //     .then((res) => res.ok)
-  //     .then((valid) => {
-  //       isAuthenticated.value = valid;
-  //     })
-  //     .catch(() => {
-  //       isAuthenticated.value = false;
-  //     });
-  // } else {
-  //   isAuthenticated.value = false;
-  // }
+  const token = localStorage.getItem("token");
+  isAuthenticated.value = token && validateToken(token);
 }
 
 onMounted(() => {

@@ -76,3 +76,28 @@ export async function getAverageAge(users) {
         throw error;
     }
 }
+
+export async function getUsersByCreationDate(users) {
+    try {
+        if (!Array.isArray(users)) {
+            if (users && Array.isArray(users.data)) {
+                users = users.data;
+            } else {
+                throw new Error('Unexpected users format');
+            }
+        }
+        const monthlyRegistrations = users.reduce((acc, user) => {
+            const month = user.createdAt ? new Date(user.createdAt).getMonth() : null;
+            if (month !== null && !Number.isNaN(month)) {
+                acc[month] += 1;
+            }
+            return acc;
+        }, new Array(12).fill(0));
+
+        return monthlyRegistrations;
+    }
+    catch (error) {
+        console.error("Error while retrieving users by creation date:", error);
+        throw error;
+    }
+}

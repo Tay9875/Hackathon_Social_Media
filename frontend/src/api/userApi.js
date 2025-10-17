@@ -1,4 +1,4 @@
-const API_USERS_URL = 'http://localhost:3000/api/users';
+const API_USERS_URL = `${import.meta.env.VITE_API_URL}/users`;
 
 export async function getUsers() {
     try {
