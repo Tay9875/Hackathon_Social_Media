@@ -69,7 +69,7 @@ onMounted(async () => {
           ]"
         >
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Utilisateurs</h2>
+            <h2 class="text-lg font-semibold text-gray-900">Users</h2>
             <button
               v-if="isUserListOpen"
               type="button"
@@ -113,7 +113,7 @@ onMounted(async () => {
           </ul>
         </aside>
         <section class="flex-1 w-full">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-4">Publications</h2>
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">Posts</h2>
           <PostList :posts="posts" />
         </section>
       </div>
