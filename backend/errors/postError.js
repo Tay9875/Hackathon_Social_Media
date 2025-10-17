@@ -8,6 +8,10 @@ class PostError extends AppError {
   static MessageTooBig() {
     return new PostError("Message is too big", 400);
   }
+  
+  static TooManyImages() {
+    return new PostError("You can only upload 4 image", 400);
+  }
 
   static missingFields() {
     return new PostError("Missing required fields", 400);

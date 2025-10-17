@@ -15,11 +15,6 @@ const postSchema = new mongoose.Schema({
     images : {
         type: Array,
     },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now,
-    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -32,6 +27,6 @@ const postSchema = new mongoose.Schema({
         unique: false,
         required: false,
     },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Post", postSchema);
