@@ -4,6 +4,8 @@ const router = express.Router();
 const Token = require("../models/tokenModel");
 const User = require("../models/userModel");
 const authMiddleware = require("../middleware/authMiddleware");
+const TokenError = require("../errors/tokenError");
+const UserError = require("../errors/userError");
 
 router.get('/', async (req, res) => {
     const tokens = await Token.find();
@@ -24,12 +26,12 @@ router.get('/:uuid', async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    const { userUuid } = req.body;
-    if (!userUuid) return res.status(400).json({ message: "Missing userUuid" });
-  
     try {
+        const { userUuid } = req.body;
+        if (!userUuid) throw TokenError.missingFields();
+        
         const user = await User.findOne({ uuid: userUuid });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) throw UserError.notFound();
         
         const userAgent = req.headers["user-agent"] || "unknown";
         const ipAddress = req.ip || req.socket.remoteAddress;
@@ -54,7 +56,7 @@ router.post("/", async (req, res) => {
           expiresAt,
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.statusCode).json({ error: err.message });
     }
 });  
 

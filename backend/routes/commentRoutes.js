@@ -41,8 +41,6 @@ router.get('/profile/:uuid', async (req, res) => {
         }));
 
         res.status(200).json(commentsWithFlag);
-
-        res.status(200).json(commentsWithFlag);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -50,17 +48,18 @@ router.get('/profile/:uuid', async (req, res) => {
 
 //create a new comment (à modifier car retourne erreur)
 router.post('/', async (req, res) => {
-    const { message, createdBy: createdByUuid, profile: profileUuid } = req.body;
-    if (message.length > 1000) throw CommentError.MessageTooBig();
-    if(!message || !createdByUuid || !profileUuid) return res.status(400).json({ message: 'Missing required fields' });
     try {
+        const { message, createdBy: createdByUuid, profile: profileUuid } = req.body;
+        if (message.length > 500) throw CommentError.messageTooLong();
+        if(!message || !createdByUuid || !profileUuid) throw CommentError.missingFields();
+
         const createdByUser = await User.findOne({ uuid: createdByUuid });
         const profileUser = await User.findOne({ uuid: profileUuid });
-        if (!createdByUser || !profileUser) return res.status(404).json({ message: 'User not found' });
+        if (!createdByUser || !profileUser) throw CommentError.notFound();
         const newComment = await Comment.create({ message, createdBy: createdByUser._id, profile: profileUser._id });
         res.status(201).json(newComment);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.statusCode).json({ error: err.message });
     }
 });
 
@@ -71,18 +70,17 @@ router.put('/:uuid', authMiddleware, async (req, res) => {
     try {
       const comment = await Comment.findOne({ uuid });
       if (!comment) throw CommentError.notFound();
+
       const user = await User.findOne({ uuid: req.userUuid });
       const ObjectUserOfComment = await User.findOne({ _id: comment.createdBy }).populate("uuid lastName firstName");
-      if (ObjectUserOfComment.uuid !== user.uuid) {
-        return res.status(403).json({ message: "You are not allowed to edit this comment" });
-      }
+      if (ObjectUserOfComment.uuid !== user.uuid) throw CommentError.unauthorizedEdit();
   
       comment.message = message;
       await comment.save();
   
       res.status(200).json({ message: "Comment updated successfully", comment });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(err.statusCode).json({ error: err.message });
     }
 });
 

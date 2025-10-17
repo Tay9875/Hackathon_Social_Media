@@ -22,7 +22,7 @@ router.get('/me', authMiddleware, async (req, res) => {
         if (!user) throw UserError.notFound();
         res.status(200).json(user);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.statusCode).json({ error: err.message });
     }
 });
 
@@ -34,15 +34,17 @@ router.get('/:uuid', async (req, res) => {
 
 //create user
 router.post('/', async (req, res) => {
-    const { firstName, lastName, gender, birthDate, email, address, avatar, password, description } = req.body;
-    if(!firstName || !lastName || !birthDate || !email || !password) throw UserError.missingFields();
     try {
+        const { firstName, lastName, gender, birthDate, email, address, avatar, password, description } = req.body;
+        if(!firstName || !lastName || !birthDate || !email || !password) throw UserError.missingFields();
+
         const existingUser = await User.findOne({ email });
         if (existingUser) throw UserError.alreadyExists();
+
         const newUser = await User.create({ uuid: uuidv4(), email, firstName, lastName, gender, birthDate, address, avatar, password, description });
         res.status(201).json(newUser);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.statusCode).json({ error: err.message });
     }
 });
 

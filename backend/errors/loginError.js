@@ -1,9 +1,14 @@
 const AppError = require("./appError");
 
-class AuthError extends AppError {
-    static existingEmail(){
-      return new AuthError("Email already used", 400);
+class LoginError extends AppError {
+    static existingEmailAndPassword() {
+      return new LoginError("Email and password are required", 400);
     }
+
+    static incorrectPassword() {
+        return new LoginError("Password incorrect", 401);
+    }
+    /*
     static missingToken() {
       return new AuthError("No token provided", 401);
     }
@@ -19,6 +24,7 @@ class AuthError extends AppError {
     static unauthorized() {
       return new AuthError("Unauthorized access", 403);
     }
+      */
 }
 
-module.exports = AuthError;
+module.exports = LoginError;
