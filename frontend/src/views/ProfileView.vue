@@ -31,7 +31,7 @@
                                 {{ formatDate(user.birthDate) }}
                             </span>
 
-                            <span v-if="isOwnProfile" class="inline-flex items-center px-3 py-1 rounded-full bg-blue-600 text-white text-sm font-medium">
+                            <span v-if="isOwnProfile" class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-600 text-white text-sm font-medium">
                                 Vous
                             </span>
                         </div>
@@ -47,7 +47,7 @@
                             <button
                                 v-if="isOwnProfile"
                                 @click="startEditProfile"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg shadow hover:from-indigo-600 hover:to-purple-600"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"></path></svg>
                                 Modifier
@@ -96,7 +96,7 @@
 
                 <div class="mt-3 flex items-center justify-between gap-3">
                     <div class="flex items-center gap-2">
-                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700">
+                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-md shadow hover:bg-indigo-600">
                             Envoyer
                         </button>
                         <button type="button" @click="newComment=''" class="text-sm text-gray-500 hover:text-gray-700">Effacer</button>
@@ -145,7 +145,7 @@
                 <textarea v-model="editContent" class="mt-3 w-full border border-gray-200 rounded-md p-3 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-indigo-200"></textarea>
                 <div class="mt-4 flex justify-end gap-3">
                     <button @click="cancelEdit" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Annuler</button>
-                    <button @click="saveEdit" class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Enregistrer</button>
+                    <button @click="saveEdit" class="px-4 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600">Enregistrer</button>
                 </div>
             </div>
         </div>
@@ -169,7 +169,7 @@
 
                 <div class="mt-6 flex justify-end gap-3">
                     <button @click="cancelProfileEdit" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300">Annuler</button>
-                    <button @click="saveProfile" class="px-4 py-2 rounded-md bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700">Enregistrer</button>
+                    <button @click="saveProfile" class="px-4 py-2 rounded-md bg-indigo-500 text-white hover:bg-indigo-600">Enregistrer</button>
                 </div>
             </div>
         </div>
