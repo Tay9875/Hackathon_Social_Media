@@ -1,8 +1,8 @@
 const Token = require("../models/tokenModel");
 const User = require("../models/userModel");
 const crypto = require("crypto");
-const AuthError = require("../errors/authError");
 const TokenError = require("../errors/tokenError");
+const UserError = require("../errors/userError");
 
 const getAllTokens = async (req, res) => {
     try {
