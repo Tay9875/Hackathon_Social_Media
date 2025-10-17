@@ -4,6 +4,10 @@ class TokenError extends AppError {
     static notFound() {
       return new TokenError("Token not found", 404);
     }
+
+    static missingFields(){
+      return new TokenError("Missing userUuid", 400);
+    }
   
     static expired() {
       return new TokenError("Token has expired", 401);

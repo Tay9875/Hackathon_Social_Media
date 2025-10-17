@@ -2,16 +2,18 @@ const crypto = require("crypto");
 const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 
+const LoginError = require("../errors/loginError");
+const UserError = require("../errors/userError");
+
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password)
-          return res.status(400).json({ message: "Email and password are required" });
+        if (!email || !password) throw LoginError.existingEmailAndPassword();
     
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) throw UserError.notFound();
     
-        if (password !== user.password) return res.status(401).json({ message: "Password incorrect" });
+        if (password !== user.password) throw LoginError.incorrectPassword();
     
         const userAgent = req.headers["user-agent"] || "unknown";
         const ipAddress = req.ip || req.socket.remoteAddress;

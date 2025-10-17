@@ -3,16 +3,18 @@ const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const hashPassword = require("../utils/hashPassword");
 
+const AuthError = require("../errors/authError");
+const UserError = require("../errors/userError");
+
 const signup = async (req, res) => {
   try {
     const { firstName, lastName, gender, birthDate, email, address, avatar, password, description } = req.body;
 
     if (!firstName || !lastName || !birthDate || !email || !password)
-      return res.status(400).json({ message: "Missing required fields" });
+      throw UserError.missingFields();
 
     const existing = await User.findOne({ email });
-    if (existing)
-      return res.status(400).json({ message: "Email already used" });
+    if (existing) throw AuthError.existingEmail();
 
     const { salt, hash } = hashPassword(password);
 
