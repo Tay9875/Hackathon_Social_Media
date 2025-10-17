@@ -106,7 +106,7 @@ export default {
             if (!this.newComment.trim() || !this.user) return;
             const comment = {
                 message: this.newComment,
-                profileUuid: this.user.uuid,
+                profile: this.user.uuid,
             };
             try {
                 const newComment = await apiAddComment(comment);

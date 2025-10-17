@@ -10,8 +10,9 @@ export async function loginUser(email, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password: hash })
   });
+  const data = await response.json();
   if (!response.ok) {
-    throw new Error('Login failed');
+    throw new Error(data.message || 'Failed to login');
   }
   const user = await response.json();
   localStorage.setItem('token', JSON.stringify(user.token));

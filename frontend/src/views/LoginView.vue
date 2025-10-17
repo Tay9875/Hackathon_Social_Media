@@ -36,7 +36,7 @@ const handleLogin = async () => {
   try {
     await loginUser(email.value, password.value);
   } catch (error) {
-    errorMessage.value = error + " Please try again.";
+    errorMessage.value = error.message + ". Please try again.";
     return;
   }
   router.push("/");
