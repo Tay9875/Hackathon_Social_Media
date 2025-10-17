@@ -15,7 +15,7 @@ export async function loginUser(email, password) {
   });
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.message || 'Failed to login');
+    throw new Error(data.error || 'Failed to login');
   }
   const user = await response.json();
   localStorage.setItem('token', JSON.stringify(user.token));

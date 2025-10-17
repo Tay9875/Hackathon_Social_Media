@@ -29,7 +29,7 @@ export async function addUser(user) {
         });
         const data = await response.json();
         if (!response.ok) {
-            throw new Error(data.message || 'Failed to signup');
+            throw new Error(data.error || 'Failed to signup');
         }
         const newUser = await response.json();
         localStorage.setItem('token', JSON.stringify(newUser.token));
