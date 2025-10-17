@@ -6,7 +6,7 @@ export async function getUsers() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
         if (!response.ok) {
@@ -25,7 +25,7 @@ export async function getUserByUuid(userUuid) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
         if (!response.ok) {
@@ -45,7 +45,7 @@ export async function getCurrentUser() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
         if (!response.ok) {
@@ -61,7 +61,7 @@ export async function getCurrentUser() {
 
 export async function updateUser(userUuid, userData) {
     try {
-        const token = JSON.parse(localStorage.getItem('token'));
+        const token = localStorage.getItem('token');
         const response = await fetch(`${API_USERS_URL}/${userUuid}`, {
             method: 'PUT',
             headers: {
