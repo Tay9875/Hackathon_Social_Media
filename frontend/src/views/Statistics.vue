@@ -38,11 +38,30 @@
 
 <script>
 import { Doughnut, Chart } from 'vue-chartjs'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import {
+  Chart as ChartJS,
+  ArcElement,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
 import { getUsersByGender, getUsersCount, getAddressesCount, getAverageAge, getUsersByCreationDate} from '@/api/statisticsApi'
 import { getUsers } from '@/api/userApi.js'
 
-ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend)
+ChartJS.register(
+  ArcElement,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend
+)
 
 
 export default {
@@ -95,7 +114,7 @@ export default {
           }
         }
       }
-      
+
       this.chart2Data = {
         labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
         datasets: [
