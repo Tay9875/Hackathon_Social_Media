@@ -9,9 +9,10 @@ const UserError = require("../errors/userError");
 const signup = async (req, res) => {
   try {
     const { firstName, lastName, gender, birthDate, email, address, avatar, password, description } = req.body;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(email)) throw AuthError.invalidEmail();
 
-    if (!firstName || !lastName || !birthDate || !email || !password)
-      throw UserError.missingFields();
+    if (!firstName || !lastName || !birthDate || !email || !password) throw UserError.missingFields();
 
     const existing = await User.findOne({ email });
     if (existing) throw AuthError.existingEmail();
