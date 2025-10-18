@@ -6,7 +6,7 @@ class CommentError extends AppError {
   }
 
   static messageTooLong() {
-    return new CommentError("Message is too long", 400);
+    return new CommentError("Message is too long, the maximum length is 1000 characters", 400);
   }
 
   static missingFields() {

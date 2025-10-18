@@ -14,7 +14,7 @@ const { getAllComments, getCommentByUuid, getCommentsByProfileUuid, getCommentsB
  * @swagger
  * /comments/profile/{uuid}:
  *   get:
- *     summary: Récupère les commentaires associés à un profil utilisateur
+ *     summary: Get comments associated with a user profile
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -22,14 +22,16 @@ const { getAllComments, getCommentByUuid, getCommentsByProfileUuid, getCommentsB
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du profil
+ *         description: UUID of the user profile
  *     responses:
- *       200:
- *         description: Liste des commentaires du profil
+ *       201:
+ *         description: List of comments associated with the user profile
  *       404:
- *         description: Profil non trouvé
+ *         description: User profile not found
+ *       404:
+ *         description: Comments not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/profile/:uuid', getCommentsByProfileUuid)
 
@@ -37,7 +39,7 @@ router.get('/profile/:uuid', getCommentsByProfileUuid)
  * @swagger
  * /comments/post/{uuid}:
  *   get:
- *     summary: Récupère les commentaires associés à une publication
+ *     summary: Get comments associated with a post
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -45,14 +47,16 @@ router.get('/profile/:uuid', getCommentsByProfileUuid)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du post
+ *         description: UUID of the post
  *     responses:
  *       200:
- *         description: Liste des commentaires du post
+ *         description: List of comments associated with the post
  *       404:
- *         description: Post non trouvé
+ *         description: Post not found
+ *       404:   
+ *         description: Comments not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/post/:uuid', getCommentsByPostUuid)
 
@@ -60,7 +64,7 @@ router.get('/post/:uuid', getCommentsByPostUuid)
  * @swagger
  * /comments/{uuid}:
  *   get:
- *     summary: Récupère un commentaire par UUID
+ *     summary: Get a comment by UUID
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -68,14 +72,14 @@ router.get('/post/:uuid', getCommentsByPostUuid)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du commentaire
+ *         description: UUID of the comment
  *     responses:
  *       200:
- *         description: Commentaire trouvé
+ *         description: Comment found
  *       404:
- *         description: Commentaire non trouvé
+ *         description: Comment not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/:uuid', getCommentByUuid)
 
@@ -83,13 +87,13 @@ router.get('/:uuid', getCommentByUuid)
  * @swagger
  * /comments:
  *   get:
- *     summary: Récupère tous les commentaires
+ *     summary: Get all comments
  *     tags: [Comments]
  *     responses:
  *       200:
- *         description: Liste de tous les commentaires
+ *         description: List of all comments
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/', getAllComments)
 
@@ -97,7 +101,7 @@ router.get('/', getAllComments)
  * @swagger
  * /comments/profile/{uuid}:
  *   post:
- *     summary: Crée un commentaire sur un profil utilisateur
+ *     summary: Create a comment on a user profile
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -107,7 +111,7 @@ router.get('/', getAllComments)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du profil cible
+ *         description: Target user profile UUID
  *     requestBody:
  *       required: true
  *       content:
@@ -119,18 +123,22 @@ router.get('/', getAllComments)
  *             properties:
  *               message:
  *                 type: string
- *                 description: Contenu du commentaire (max 1000 caractères)
+ *                 description: Comment content (max 1000 characters)
  *     responses:
  *       201:
- *         description: Commentaire créé avec succès
+ *         description: Comment created successfully, the comment is added to the database
  *       400:
- *         description: Champs manquants
+ *         description: Message is too long, the maximum length is 1000 characters
+ *       400:
+ *         description: Missing fields
  *       401:
- *         description: Non authentifié
+ *         description: Session invalid — please re-login
  *       404:
- *         description: Profil non trouvé
+ *         description: User not found
+ *       404:
+ *         description : User profile not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.post('/profile/:uuid', authMiddleware, createCommentOnProfile)
 
@@ -146,10 +154,18 @@ router.post('/profile/:uuid', authMiddleware, createCommentOnProfile)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du post
+ *         description: UUID of the post
  *     responses:
- *       200:
+ *       201:
  *         description: Comment added successfully
+ *       400:
+ *         description: Message is too long, the maximum length is 1000 characters
+ *       400:
+ *         description: Missing fields
+ *       401:
+ *         description: Session invalid — please re-login
+ *       404:
+ *         description: User not found
  *       404:
  *         description: Post not found
  *       500:
@@ -161,7 +177,7 @@ router.post('/post/:uuid', authMiddleware, createCommentOnPost)
  * @swagger
  * /comments/{uuid}:
  *   put:
- *     summary: Met à jour un commentaire existant
+ *     summary: Update an existing comment
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -171,7 +187,7 @@ router.post('/post/:uuid', authMiddleware, createCommentOnPost)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du commentaire à modifier
+ *         description: UUID of the comment to update
  *     requestBody:
  *       required: true
  *       content:
@@ -183,14 +199,22 @@ router.post('/post/:uuid', authMiddleware, createCommentOnPost)
  *                 type: string
  *                 description: Nouveau texte du commentaire
  *     responses:
- *       200:
- *         description: Commentaire mis à jour
+ *       201:
+ *         description: Comment updated successfully
+ *       400:
+ *         description: Message is too long, the maximum length is 1000 characters
+ *       400:
+ *         description: Missing fields
  *       401:
- *         description: Non autorisé
+ *         description: Session invalid — please re-login
+ *       403:
+ *         description: You cannot edit someone else's comment
  *       404:
- *         description: Commentaire non trouvé
+ *         description: Comment not found
+ *       404:
+ *         description: User not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.put('/:uuid', authMiddleware, updateComment)
 
@@ -198,7 +222,7 @@ router.put('/:uuid', authMiddleware, updateComment)
  * @swagger
  * /comments/{uuid}:
  *   delete:
- *     summary: Supprime un commentaire existant
+ *     summary: Delete an existing comment
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -211,13 +235,17 @@ router.put('/:uuid', authMiddleware, updateComment)
  *         description: UUID du commentaire à supprimer
  *     responses:
  *       200:
- *         description: Commentaire supprimé
+ *         description: Comment deleted successfully
  *       401:
- *         description: Non autorisé
+ *         description: Session invalid — please re-login
+ *       403:
+ *         description: You cannot delete someone else's comment
  *       404:
- *         description: Commentaire non trouvé
+ *         description: Comment not found
+ *       404:
+ *         description: User not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.delete('/:uuid', authMiddleware, deleteComment)
 

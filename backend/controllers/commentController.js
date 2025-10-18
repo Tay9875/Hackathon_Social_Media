@@ -10,6 +10,7 @@ const Token = require("../models/tokenModel");
 const getAllComments = async (req, res) => {
     try {
         const comments = await Comment.find().sort({ createdAt: 1});
+        if (!comments) throw CommentError.notFound();
         res.status(200).json(comments);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -21,6 +22,7 @@ const getCommentByUuid = async (req, res) => {
         const comment = await Comment.findOne({ uuid: req.params.uuid })
             .populate("createdBy", "uuid firstName lastName avatar")
             .populate("targetId", "uuid firstName lastName avatar");
+        if (!comment) throw CommentError.notFound();
         res.status(200).json(comment);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -30,10 +32,11 @@ const getCommentByUuid = async (req, res) => {
 const getCommentsByProfileUuid = async (req, res) => {
     try {
         const profile = await User.findOne({ uuid: req.params.uuid });
+        if(!profile) throw UserError.notFound();
         const comments = await Comment.find({ targetId: profile._id })
             .populate("createdBy", "uuid firstName lastName avatar")
             .sort({ createdAt: -1 });
-        
+        if(!comments) throw CommentError.notFound();
         let currentUserUuid = null;
         const tokenValue = req.cookies?.authToken || req.headers["authorization"]?.replace("Bearer ", "");
         if (tokenValue) {
@@ -54,10 +57,11 @@ const getCommentsByProfileUuid = async (req, res) => {
 const getCommentsByPostUuid = async (req, res) => {
     try {
         const post = await Post.findOne({ uuid: req.params.uuid });
+        if (!post) throw PostError.notFound();
         const comments = await Comment.find({ targetId: post._id })
             .populate("createdBy", "uuid firstName lastName avatar")
             .sort({ createdAt: -1 });
-
+        if (!comments) throw CommentError.notFound();
         let currentUserUuid = null;
         const tokenValue = req.cookies?.authToken || req.headers["authorization"]?.replace("Bearer ", "");
         if (tokenValue) {
@@ -78,8 +82,9 @@ const getCommentsByPostUuid = async (req, res) => {
 const createCommentOnProfile = async (req, res) => {
     try {
         const { message } = req.body;
-        if(message.length > 1000) throw CommentError.MessageTooBig();
-        if(!req.userUuid) throw AuthError.invalidSession();
+        if(!message) throw CommentError.missingFields();
+        if(message.length > 1000) throw CommentError.messageTooLong();
+        if(!req.userUuid) throw AuthError.sessionInvalid();
         const authenticatedUser = await User.findOne({ uuid: req.userUuid });
         if(!authenticatedUser) throw UserError.notFound();
         if(!message) throw CommentError.missingFields();
@@ -100,7 +105,7 @@ const createCommentOnProfile = async (req, res) => {
 const createCommentOnPost = async (req, res) => {
     try {
         const { message } = req.body;
-        if (message.length > 1000) throw CommentError.MessageTooBig();
+        if (message.length > 1000) throw CommentError.messageTooLong();
         if(!message) throw CommentError.missingFields();
         const authenticatedUser = await User.findOne({ uuid: req.userUuid });
         if(!authenticatedUser) throw UserError.notFound();
@@ -123,10 +128,12 @@ const updateComment = async (req, res) => {
         const { message } = req.body;
         const { uuid } = req.params;
         if (!message) throw CommentError.missingFields();
-        if (message.length > 1000) throw CommentError.MessageTooBig();
+        if (message.length > 1000) throw CommentError.messageTooLong();
+        if(!req.userUuid) throw AuthError.sessionInvalid();
         const comment = await Comment.findOne({ uuid });
         if (!comment) throw CommentError.notFound();
         const user = await User.findOne({ uuid: req.userUuid });
+        if(!user) throw UserError.notFound();
         const ObjectUserOfComment = await User.findOne({ _id: comment.createdBy }).populate("uuid lastName firstName");
         if (ObjectUserOfComment.uuid !== user.uuid) throw CommentError.unauthorizedEdit();
         comment.message = message;
@@ -142,7 +149,9 @@ const deleteComment = async (req, res) => {
         const { uuid } = req.params;
         const comment = await Comment.findOne({ uuid });
         if (!comment) throw CommentError.notFound();
+        if(!req.userUuid) throw AuthError.sessionInvalid();
         const user = await User.findOne({ uuid: req.userUuid });
+        if(!user) throw UserError.notFound();
         const ObjectUserOfComment = await User.findOne({ _id: comment.createdBy }).populate("uuid lastName firstName");
         if (ObjectUserOfComment.uuid !== user.uuid) throw CommentError.unauthorizedDelete();
         await comment.deleteOne();
