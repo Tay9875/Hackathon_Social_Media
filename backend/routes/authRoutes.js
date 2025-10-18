@@ -7,7 +7,7 @@ const loginController = require("../controllers/loginController");
  * @swagger
  * tags:
  *   name: Auth
- *   description: Gestion de l'authentification (inscription / connexion)
+ *   description: Management of authentication (signup / login)
  */
 /**
  * @swagger

@@ -7,20 +7,22 @@ const { getAllTokens, checkToken, getTokenByUuid, createToken, deleteToken } = r
  * @swagger
  * tags:
  *   name: Tokens
- *   description: Gestion des tokens d'authentification
+ *   description: Management of tokens of authentication
  */
 
 /**
  * @swagger
  * /tokens:
  *   get:
- *     summary: Récupère tous les tokens
+ *     summary: Get all tokens
  *     tags: [Tokens]
  *     responses:
  *       200:
- *         description: Liste des tokens existants
+ *         description: List of existing tokens
+ *       404:
+ *         description: Tokens not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/', getAllTokens)
 
@@ -34,9 +36,13 @@ router.get('/', getAllTokens)
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Token valide
+ *         description: Token is valid
  *       401:
- *         description: Token invalide ou expiré
+ *         description: Token invalid or expired
+ *       401:
+ *         description: Session invalid — please re-login
+ *       500:
+ *         description: Server error
  */
 router.get("/check", authMiddleware, checkToken)
 
@@ -44,7 +50,7 @@ router.get("/check", authMiddleware, checkToken)
  * @swagger
  * /tokens/{uuid}:
  *   get:
- *     summary: Récupère un token par son UUID
+ *     summary: Get a token by its UUID
  *     tags: [Tokens]
  *     parameters:
  *       - in: path
@@ -52,12 +58,14 @@ router.get("/check", authMiddleware, checkToken)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du token
+ *         description: UUID of the token
  *     responses:
  *       200:
- *         description: Token trouvé
+ *         description: Token found
  *       404:
- *         description: Token non trouvé
+ *         description: Token not found
+ *       500:
+ *         description: Server error
  */
 router.get('/:uuid', getTokenByUuid)
 
@@ -65,7 +73,7 @@ router.get('/:uuid', getTokenByUuid)
  * @swagger
  * /tokens:
  *   post:
- *     summary: Crée un token pour un utilisateur
+ *     summary: Create a token for a user
  *     tags: [Tokens]
  *     requestBody:
  *       required: true
@@ -78,14 +86,16 @@ router.get('/:uuid', getTokenByUuid)
  *             properties:
  *               userUuid:
  *                 type: string
- *                 description: UUID de l'utilisateur
+ *                 description: UUID of the user
  *     responses:
  *       201:
- *         description: Token créé avec succès
+ *         description: Token created successfully
  *       400:
- *         description: Champs manquants
+ *         description: Missing required fields
  *       404:
- *         description: Utilisateur non trouvé
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router.post("/", createToken)
 
@@ -93,15 +103,23 @@ router.post("/", createToken)
  * @swagger
  * /tokens:
  *   delete:
- *     summary: Supprime le token actuel
+ *     summary: Delete the current token
  *     tags: [Tokens]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Token supprimé avec succès
+ *         description: Token deleted successfully
  *       401:
- *         description: Token invalide ou expiré
+ *         description: Token invalid or expired
+ *       401:
+ *         description: Session invalid — please re-login
+ *       400:
+ *         description: Missing required fields
+ *       404:
+ *         description: Token not found
+ *       500:
+ *         description: Server error
  */
 router.delete("/", authMiddleware, deleteToken);
 

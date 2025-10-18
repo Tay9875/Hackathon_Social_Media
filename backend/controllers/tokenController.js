@@ -7,6 +7,7 @@ const UserError = require("../errors/userError");
 const getAllTokens = async (req, res) => {
     try {
         const tokens = await Token.find();
+        if (!tokens) throw TokenError.notFound();
         res.status(200).json(tokens);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -24,6 +25,7 @@ const checkToken = async (req, res) => {
 const getTokenByUuid = async (req, res) => {
     try {
         const token = await Token.findOne({ uuid: req.params.uuid });
+        if (!token) throw TokenError.notFound();
         res.status(200).json(token);
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -5,6 +5,7 @@ const UserError = require("../errors/userError");
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
+        if (!users) throw UserError.notFound();
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -58,6 +59,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { firstName, lastName, gender, birthDate, address, avatar, password, description } = req.body;
+        if(!firstName || !lastName || !birthDate || !email || !password) throw UserError.missingFields();
         const user = await User.findOne({ uuid });
         if (!user) throw UserError.notFound();
         if (user.uuid !== req.userUuid) throw UserError.unauthorized();

@@ -7,20 +7,22 @@ const { getAllPosts, getProfilePosts, getPostByUuid, createPost, updatePost, del
  * @swagger
  * tags:
  *   name: Posts
- *   description: Gestion des publications des utilisateurs
+ *   description: Management of posts of users
  */
 
 /**
  * @swagger
  * /posts:
  *   get:
- *     summary: Récupère toutes les publications
+ *     summary: Get all posts
  *     tags: [Posts]
  *     responses:
  *       200:
- *         description: Liste de toutes les publications
+ *         description: List of all posts
+ *       404:
+ *         description: Posts not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/', getAllPosts)
 
@@ -28,7 +30,7 @@ router.get('/', getAllPosts)
  * @swagger
  * /posts/profile/{uuid}:
  *   get:
- *     summary: Récupère les publications d’un utilisateur spécifique
+ *     summary: Get posts of a specific user
  *     tags: [Posts]
  *     parameters:
  *       - in: path
@@ -36,14 +38,16 @@ router.get('/', getAllPosts)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du profil utilisateur
+ *         description: UUID of the user profile
  *     responses:
  *       200:
- *         description: Liste des publications de l'utilisateur
+ *         description: List of posts of the user
  *       404:
- *         description: Utilisateur non trouvé
+ *         description: User not found
+ *       404:
+ *         description: Posts not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/profile/:uuid', getProfilePosts)
 
@@ -51,7 +55,7 @@ router.get('/profile/:uuid', getProfilePosts)
  * @swagger
  * /posts/{uuid}:
  *   get:
- *     summary: Récupère une publication par son UUID
+ *     summary: Get a post by its UUID
  *     tags: [Posts]
  *     parameters:
  *       - in: path
@@ -59,14 +63,14 @@ router.get('/profile/:uuid', getProfilePosts)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du post
+ *         description: UUID of the post
  *     responses:
  *       200:
- *         description: Détails du post trouvé
+ *         description: Details of the post found
  *       404:
- *         description: Post non trouvé
+ *         description: Post not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.get('/:uuid', getPostByUuid)
 
@@ -74,7 +78,7 @@ router.get('/:uuid', getPostByUuid)
  * @swagger
  * /posts:
  *   post:
- *     summary: Crée une nouvelle publication
+ *     summary: Create a new post
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -89,21 +93,29 @@ router.get('/:uuid', getPostByUuid)
  *             properties:
  *               content:
  *                 type: string
- *                 description: Texte du post
+ *                 description: Text of the post
  *               images:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Liste d'URL d'images (max 4)
+ *                 description: List of URLs of images (max 4)
  *     responses:
  *       201:
- *         description: Post créé avec succès
+ *         description: Post created successfully
  *       400:
- *         description: Champs manquants ou invalides
+ *         description: Missing required fields 
+ *       400:
+ *         description: Message is too big, the maximum length is 1500 characters
+ *       400:
+ *         description: You can only upload 4 image
  *       401:
- *         description: Session invalide
+ *         description: Session invalid — please re-login
+ *       403:
+ *         description: You cannot edit someone else's post
+ *       404:
+ *         description: User not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.post('/', authMiddleware, createPost)
 
@@ -111,7 +123,7 @@ router.post('/', authMiddleware, createPost)
  * @swagger
  * /posts/{uuid}:
  *   put:
- *     summary: Met à jour une publication existante
+ *     summary: Update an existing post
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -121,7 +133,7 @@ router.post('/', authMiddleware, createPost)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du post
+ *         description: UUID of the post
  *     requestBody:
  *       required: true
  *       content:
@@ -131,21 +143,29 @@ router.post('/', authMiddleware, createPost)
  *             properties:
  *               content:
  *                 type: string
- *                 description: Nouveau texte du post
+ *                 description: New text of the post
  *               images:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Nouvelles images associées
+ *                 description: New images associated
  *     responses:
  *       200:
- *         description: Post mis à jour avec succès
+ *         description: Post updated successfully
+ *       400:
+ *         description: Missing required fields
+ *       400:
+ *         description: Message is too big, the maximum length is 1500 characters
+ *       400:
+ *         description: You can only upload 4 image
  *       401:
- *         description: Non autorisé
+ *         description: Session invalid — please re-login
+ *       403:
+ *         description: You cannot edit someone else's post
  *       404:
- *         description: Post non trouvé
+ *         description: Post not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.put('/:uuid', authMiddleware, updatePost)
 
@@ -153,7 +173,7 @@ router.put('/:uuid', authMiddleware, updatePost)
  * @swagger
  * /posts/{uuid}:
  *   delete:
- *     summary: Supprime une publication existante
+ *     summary: Delete an existing post
  *     tags: [Posts]
  *     security:
  *       - bearerAuth: []
@@ -163,16 +183,18 @@ router.put('/:uuid', authMiddleware, updatePost)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID du post à supprimer
+ *         description: UUID of the post to delete
  *     responses:
  *       200:
- *         description: Post supprimé avec succès
+ *         description: Post deleted successfully
  *       401:
- *         description: Non autorisé
+ *         description: Session invalid — please re-login
+ *       403:
+ *         description: You cannot delete someone else's post
  *       404:
- *         description: Post non trouvé
+ *         description: Post not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.delete('/:uuid', authMiddleware, deletePost)
 

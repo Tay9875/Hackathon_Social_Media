@@ -2,10 +2,12 @@ const User = require("../models/userModel");
 const Post = require("../models/postModel");
 const PostError = require("../errors/postError");
 const UserError = require("../errors/userError");
+const AuthError = require("../errors/authError");
 
 const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find().sort({ createdAt: -1});
+        if (!posts) throw PostError.notFound();
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -15,10 +17,11 @@ const getAllPosts = async (req, res) => {
 const getProfilePosts = async (req, res) => {
     try {
         const profile = await User.findOne({ uuid: req.params.uuid });
+        if (!profile) throw UserError.notFound();
         const posts = await Post.find({ createdBy: profile._id})
             .populate("createdBy", "uuid firstName lastName avatar")
-            .sort({ createdAt: -1 }); // à modifier pour augmenter la vitesse de la requête ?
-
+            .sort({ createdAt: -1 });
+        if (!posts) throw PostError.notFound();
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json({ error: err.message });

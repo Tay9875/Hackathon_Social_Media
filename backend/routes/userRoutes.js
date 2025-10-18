@@ -7,18 +7,22 @@ const { getAllUsers, getMe, getUserByUuid, createUser, updateUser, deleteUser } 
  * @swagger
  * tags:
  *   name: Users
- *   description: Gestion des utilisateurs
+ *   description: Management of users
  */
 
 /**
  * @swagger
  * /users:
  *   get:
- *     summary: Récupère tous les utilisateurs
+ *     summary: Get all users
  *     tags: [Users]
  *     responses:
  *       200:
- *         description: Liste des utilisateurs
+ *         description: List of all users
+ *       404:
+ *         description: Users not found
+ *       500:
+ *         description: Server error
  */
 router.get('/', getAllUsers)
 
@@ -26,15 +30,17 @@ router.get('/', getAllUsers)
  * @swagger
  * /users/me:
  *   get:
- *     summary: Récupère l'utilisateur connecté
+ *     summary: Get the connected user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Détails de l'utilisateur connecté
- *       401:
- *         description: Non authentifié
+ *         description: Details of the connected user
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router.get('/me', authMiddleware, getMe)
 
@@ -42,7 +48,7 @@ router.get('/me', authMiddleware, getMe)
  * @swagger
  * /users/{uuid}:
  *   get:
- *     summary: Récupère un utilisateur par son UUID
+ *     summary: Get a user by its UUID
  *     tags: [Users]
  *     parameters:
  *       - in: path
@@ -50,12 +56,14 @@ router.get('/me', authMiddleware, getMe)
  *         required: true
  *         schema:
  *           type: string
- *         description: UUID de l'utilisateur
+ *         description: UUID of the user
  *     responses:
  *       200:
- *         description: Détails de l'utilisateur
+ *         description: Details of the user
  *       404:
- *         description: Utilisateur non trouvé
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router.get('/:uuid', getUserByUuid)
 
@@ -63,7 +71,7 @@ router.get('/:uuid', getUserByUuid)
  * @swagger
  * /users:
  *   post:
- *     summary: Crée un nouvel utilisateur
+ *     summary: Create a new user
  *     tags: [Users]
  *     requestBody:
  *       required: true
@@ -100,9 +108,13 @@ router.get('/:uuid', getUserByUuid)
  *                 type: string
  *     responses:
  *       201:
- *         description: Utilisateur créé avec succès
+ *         description: User created successfully
  *       400:
- *         description: Champs requis manquants
+ *         description: Missing required fields
+ *       409:
+ *         description: User already exists
+ *       500:
+ *         description: Server error
  */
 router.post('/', createUser)
 
@@ -111,7 +123,7 @@ router.post('/', createUser)
  * @swagger
  * /users/{uuid}:
  *   put:
- *     summary: Met à jour un utilisateur
+ *     summary: Update a user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -148,11 +160,15 @@ router.post('/', createUser)
  *                 type: string
  *     responses:
  *       200:
- *         description: Utilisateur mis à jour
- *       401:
- *         description: Non autorisé
+ *         description: User updated successfully
+ *       400:
+ *         description: Missing required fields
+ *       403:
+ *         description: You are not authorized to access this resource
  *       404:
- *         description: Utilisateur non trouvé
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router.put('/:uuid', authMiddleware, updateUser)
 
@@ -160,7 +176,7 @@ router.put('/:uuid', authMiddleware, updateUser)
  * @swagger
  * /users/{uuid}:
  *   delete:
- *     summary: Supprime un utilisateur
+ *     summary: Delete a user
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -172,11 +188,13 @@ router.put('/:uuid', authMiddleware, updateUser)
  *           type: string
  *     responses:
  *       200:
- *         description: Utilisateur supprimé
+ *         description: User deleted successfully
  *       401:
- *         description: Non autorisé
+ *         description: You are not authorized to access this resource
  *       404:
- *         description: Utilisateur non trouvé
+ *         description: User not found
+ *       500:
+ *         description: Server error
  */
 router.delete('/:uuid', authMiddleware, deleteUser)
 

@@ -7,7 +7,7 @@ const { getAllComments, getCommentByUuid, getCommentsByProfileUuid, getCommentsB
  * @swagger
  * tags:
  *   name: Comments
- *   description: Gestion des commentaires sur profils et publications
+ *   description: Management of comments on profiles and posts
  */
 
 /**
