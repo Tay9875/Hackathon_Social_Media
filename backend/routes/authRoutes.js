@@ -99,6 +99,8 @@ router.post('/signup', authController)
  *         description: Password incorrect
  *       404:
  *         description: Email incorrect
+ *       500:
+ *         description: Server error
  */
 router.post('/login', loginController)
 
