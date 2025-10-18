@@ -16,6 +16,10 @@ class CommentError extends AppError {
   static unauthorizedEdit() {
     return new CommentError("You cannot edit someone else's comment", 403);
   }
+
+  static unauthorizedDelete() {
+    return new CommentError("You cannot delete someone else's comment", 403);
+  }
 }
 
 module.exports = CommentError;
