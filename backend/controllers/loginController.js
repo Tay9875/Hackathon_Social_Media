@@ -1,9 +1,7 @@
 const crypto = require("crypto");
 const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
-
 const LoginError = require("../errors/loginError");
-const UserError = require("../errors/userError");
 
 const login = async (req, res) => {
     try {
@@ -11,7 +9,7 @@ const login = async (req, res) => {
         if (!email || !password) throw LoginError.existingEmailAndPassword();
     
         const user = await User.findOne({ email });
-        if (!user) throw UserError.notFound();
+        if (!user) throw LoginError.incorrectEmail();
     
         if (password !== user.password) throw LoginError.incorrectPassword();
     

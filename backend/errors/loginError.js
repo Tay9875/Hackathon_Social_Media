@@ -8,6 +8,10 @@ class LoginError extends AppError {
     static incorrectPassword() {
         return new LoginError("Password incorrect", 401);
     }
+
+    static incorrectEmail() {
+        return new LoginError("Email incorrect", 404);
+    }
     /*
     static missingToken() {
       return new AuthError("No token provided", 401);
