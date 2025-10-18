@@ -13,7 +13,7 @@ const loginController = require("../controllers/loginController");
  * @swagger
  * /auth/signup:
  *   post:
- *     summary: Inscrit un nouvel utilisateur
+ *     summary: Register a new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -50,11 +50,21 @@ const loginController = require("../controllers/loginController");
  *                 type: string
  *     responses:
  *       201:
- *         description: Utilisateur créé avec succès
+ *         description: User created successfully, created the token and add the user information to the database
  *       400:
- *         description: Champs manquants ou e-mail existant
+ *         description: Email already used
+ *       401:
+ *         description: Invalid email format, the email must be in the format example@example.com
+ *       401:
+ *         description: No token provided
+ *       401:
+ *         description: Invalid or expired token
+ *       401:
+ *         description: Session invalid — please re-login
+ *       403:
+ *         description: Unauthorized access
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.post('/signup', authController)
 
@@ -62,7 +72,7 @@ router.post('/signup', authController)
  * @swagger
  * /auth/login:
  *   post:
- *     summary: Connecte un utilisateur existant
+ *     summary: Connect a user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -82,13 +92,13 @@ router.post('/signup', authController)
  *                 description: Mot de passe
  *     responses:
  *       200:
- *         description: Connexion réussie, retourne le token
+ *         description: Login successful, retourn the token the token, the token expires at and the user information
+ *       400: 
+ *         description: Email and password are required
  *       401:
- *         description: Identifiants incorrects
+ *         description: Password incorrect
  *       404:
- *         description: Utilisateur non trouvé
- *       500:
- *         description: Erreur serveur
+ *         description: Email incorrect
  */
 router.post('/login', loginController)
 
