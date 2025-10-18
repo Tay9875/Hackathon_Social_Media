@@ -6,7 +6,7 @@ export async function fetchComments(profileUuid) {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
         if (!response.ok) {
@@ -22,11 +22,11 @@ export async function fetchComments(profileUuid) {
 
 export async function addComment(comment) {
     try {
-        const response = await fetch(API_COMMENT_URL, {
+        const response = await fetch(API_COMMENT_URL + '/profile/' + comment.profile, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(comment)
         });
@@ -46,7 +46,7 @@ export async function updateComment(commentUuid, newContent) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify({ message: newContent })
         });
@@ -66,7 +66,7 @@ export async function deleteComment(commentUuid) {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
         if (!response.ok) {

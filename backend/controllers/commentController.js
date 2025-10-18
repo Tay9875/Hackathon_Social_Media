@@ -5,6 +5,7 @@ const AuthError = require("../errors/authError");
 const CommentError = require("../errors/commentError");
 const UserError = require("../errors/userError");
 const PostError = require("../errors/postError");
+const Token = require("../models/tokenModel");
 
 const getAllComments = async (req, res) => {
     try {
@@ -84,8 +85,13 @@ const createCommentOnProfile = async (req, res) => {
         if(!message) throw CommentError.missingFields();
         const profile = await User.findOne({ uuid: req.params.uuid });
         if(!profile) throw UserError.notFound();
-        const newComment = await Comment.create({ message, createdBy: authenticatedUser._id, targetId: profile._id, targetModel: "User" });
-        res.status(201).json(newComment);
+        let newComment = await Comment.create({ message, createdBy: authenticatedUser._id, targetId: profile._id, targetModel: "User" });
+    newComment = await Comment.findById(newComment._id).populate("createdBy", "uuid firstName lastName avatar");
+    
+    const userIsAuthor = req.userUuid && newComment.createdBy && newComment.createdBy.uuid === req.userUuid;
+    const commentObj = newComment.toObject();
+    commentObj.userIsAuthor = userIsAuthor;
+    res.status(201).json(commentObj);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -100,8 +106,13 @@ const createCommentOnPost = async (req, res) => {
         if(!authenticatedUser) throw UserError.notFound();
         const post = await Post.findOne({ uuid: req.params.uuid });
         if (!post) throw PostError.notFound();
-        const newComment = await Comment.create({ message, createdBy: authenticatedUser._id, targetId: post._id, targetModel: "Post" });
-        res.status(201).json(newComment);
+        let newComment = await Comment.create({ message, createdBy: authenticatedUser._id, targetId: post._id, targetModel: "Post" });
+    newComment = await Comment.findById(newComment._id).populate("createdBy", "uuid firstName lastName avatar");
+    
+    const userIsAuthor = req.userUuid && newComment.createdBy && newComment.createdBy.uuid === req.userUuid;
+    const commentObj = newComment.toObject();
+    commentObj.userIsAuthor = userIsAuthor;
+    res.status(201).json(commentObj);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

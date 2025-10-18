@@ -137,8 +137,8 @@ router.post('/profile/:uuid', authMiddleware, createCommentOnProfile)
 /**
  * @swagger
  * /comments/post/{uuid}:
- *   get:
- *     summary: Récupère les commentaires associés à une publication
+ *   post:
+ *     summary: Add a comment on a post
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -149,11 +149,11 @@ router.post('/profile/:uuid', authMiddleware, createCommentOnProfile)
  *         description: UUID du post
  *     responses:
  *       200:
- *         description: Liste des commentaires du post
+ *         description: Comment added successfully
  *       404:
- *         description: Post non trouvé
+ *         description: Post not found
  *       500:
- *         description: Erreur serveur
+ *         description: Server error
  */
 router.post('/post/:uuid', authMiddleware, createCommentOnPost)
 

@@ -18,6 +18,6 @@ export async function loginUser(email, password) {
     throw new Error(data.error || 'Failed to login');
   }
   const user = data;
-  localStorage.setItem('token', JSON.stringify(user.token));
+  localStorage.setItem('token', user.token);
   return user;
 }
